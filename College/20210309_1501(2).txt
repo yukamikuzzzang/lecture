@@ -1,0 +1,46 @@
+전처리기
+std
+using
+namespace 각 변수의 충돌이 나지않도록 할 수 이음.// 자바의 패키지 개념
+
+2장
+#include <iostream> //cout << 연산자 포함
+void main() //표준 아님
+
+ios, istream, 등등.. 하지만 iostream을 쓰세요
+short, int, long
+
+int area(int r){
+	int a= xxx //전역변수
+}
+
+int main(){
+}
+
+std도 이름공간;namespace 중 하나
+std::cout. std::cin, std::endl
+생략을 원한다면 using namespace std; >>> cout, cin. endl
+
+입력을 받는 cin
+std::cin >> width;
+
+**함수로 만들어서 할 때에
+매개변수의 형을 만드는 것에 주의!
+
+데이터타입에 bool이 추가 되었다는 부분! true/ false
+
+연산자.. 시프트연산자
+>> 2^x (x>0)
+<< 2^x (x<0)
+
+sizeof(a)
+a의 크기:int, byte...
+
+비트연산자(AND,& / OR,|)
+c=(A+B,A-B); >> A-B
+
+배열 자체를 어떤 함수의 변수로써 받아들일 수 있다.
+포인터: 실행 중 메모리의 주소 값
+
+포인터를 매개변수로 주었을 때
+주소로써 받아들일 수 있다..?!
