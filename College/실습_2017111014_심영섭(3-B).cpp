@@ -1,8 +1,8 @@
-//ÀÛ¼º-ÀúÀå(Ctrl+S)-½ÇÇà(F11)
-//#include <stdio.h> //ÀüÃ³¸®±â 
+//ì‘ì„±-ì €ì¥(Ctrl+S)-ì‹¤í–‰(F11)
+//#include <stdio.h> //ì „ì²˜ë¦¬ê¸° 
 #include <iostream>
 //using std::endl;
-using namespace std; //std¾È¿¡ cout, endl, cin(scanf) µî 
+using namespace std; //stdì•ˆì— cout, endl, cin(scanf) ë“± 
 //std::cout<<"hello"<<std::cout<<endl;
 
 
@@ -14,7 +14,7 @@ namespcae park{
 }
 using namespace kim
 
-int main()//os¿¡¼­ Ã³À½ ÀĞÇôÁö´Â ÇÔ¼ö 
+int main()//osì—ì„œ ì²˜ìŒ ì½í˜€ì§€ëŠ” í•¨ìˆ˜ 
 {
 	//printf("Hello"); scanf()
 	cout<<"hello"<<endl;
@@ -26,33 +26,33 @@ int main()//os¿¡¼­ Ã³À½ ÀĞÇôÁö´Â ÇÔ¼ö
 }*/
 
 /*int main(){
-	cout << "³Êºñ¸¦ ÀÔ·ÂÇÏ¼¼¿ä>> ";
+	cout << "ë„ˆë¹„ë¥¼ ì…ë ¥í•˜ì„¸ìš”>> ";
 	
 	int width;
 	cin >> width;
 	
-	cout << "³ôÀÌ¸¦ ÀÔ·ÂÇÏ¼¼¿ä>> ";
+	cout << "ë†’ì´ë¥¼ ì…ë ¥í•˜ì„¸ìš”>> ";
 	
 	int height;
 	cin >> height;
 	
 	int area = width * height;
-	cout << "¸éÀûÀº " << area << endl;
+	cout << "ë©´ì ì€ " << area << endl;
 	return 0;
 }*/
 
 /*
-int x = 50; //Àü¿ªº¯¼ö  
-int getArea(int a,int b){	//ÇÔ¼ö°¡ À§¿¡ ÀÖÀ» ¶§ 
+int x = 50; //ì „ì—­ë³€ìˆ˜  
+int getArea(int a,int b){	//í•¨ìˆ˜ê°€ ìœ„ì— ìˆì„ ë•Œ 
 	return a * b;
 }
-void line();//ÇÔ¼ö ¿øÇü 
+void line();//í•¨ìˆ˜ ì›í˜• 
 int main(){
 	int width, height;
 	line();
-	cout << "³Êºñ¿Í ³ôÀÌ¸¦ ÀÔ·ÂÇÏ¼¼¿ä. ";
+	cout << "ë„ˆë¹„ì™€ ë†’ì´ë¥¼ ì…ë ¥í•˜ì„¸ìš”. ";
 	cin>>width>>height;
-	cout<<"»ç°¢ÇüÀÇ ¸éÀûÀº? "<<getArea(width,height)<<endl;	
+	cout<<"ì‚¬ê°í˜•ì˜ ë©´ì ì€? "<<getArea(width,height)<<endl;	
 	line();
 
 void line(){
@@ -72,30 +72,30 @@ cout<<c;
 int main(){
 	int n = 3;
 	cout<<n<<endl;
-	int *p; //Æ÷ÀÎÅÍº¯¼ö 
-	p = &n; //n¿¡ µé¾îÀÖ´Â ÁÖ¼ÒÀÇ  °ª 
+	int *p; //í¬ì¸í„°ë³€ìˆ˜ 
+	p = &n; //nì— ë“¤ì–´ìˆëŠ” ì£¼ì†Œì˜  ê°’ 
 	cout<<p<<endl<<*p<<endl;
 	*p=555;
 	cout<<*p<<endl;
-	//ÇØ´ç ÁÖ¼ÒÀÇ 4byte¸¦ ´õÇÏ¸é ´ÙÀ½ ÁÖ¼Ò·Î ³Ñ¾î°¨. 
+	//í•´ë‹¹ ì£¼ì†Œì˜ 4byteë¥¼ ë”í•˜ë©´ ë‹¤ìŒ ì£¼ì†Œë¡œ ë„˜ì–´ê°. 
 }
-// ¸Ş¸ğ¸® °ü¸®ÇÏ´Â °÷¿¡ »ç¿ëÇÏ´Â Æ÷ÀÎÅÍ º¯¼ö 
+// ë©”ëª¨ë¦¬ ê´€ë¦¬í•˜ëŠ” ê³³ì— ì‚¬ìš©í•˜ëŠ” í¬ì¸í„° ë³€ìˆ˜ 
 */
 #include <time.h>
 #include <stdlib.h>
 
-void getSort(int arr[],int k); //ÇÔ¼öÀÇ ¿øÇü  
+void getSort(int arr[],int k); //í•¨ìˆ˜ì˜ ì›í˜•  
 
 int main(){
 	int i = 0;
 	int sum = 0; 
 	int MAX;
 	srand(time(NULL));
-	//cout<<"ÀÓÀÇÀÇ ¼ö: "<<rand()%100+1<<endl; //1~100È­ »çÀÌÀÇ ÀÓÀÇÀÇ ¼ö 
+	//cout<<"ì„ì˜ì˜ ìˆ˜: "<<rand()%100+1<<endl; //1~100í™” ì‚¬ì´ì˜ ì„ì˜ì˜ ìˆ˜ 
 	int x[10];
 	int z = sizeof(x)/sizeof(x[0]);
-	cout<<"¹è¿­ÀÇ Å©±â: "<<z<<endl;
-	//¿À¸§Â÷¼ø Á¤·Ä 
+	cout<<"ë°°ì—´ì˜ í¬ê¸°: "<<z<<endl;
+	//ì˜¤ë¦„ì°¨ìˆœ ì •ë ¬ 
 	
 	
 	do{
@@ -117,14 +117,14 @@ int main(){
 	cout<<endl;
 	
 	int avg = sum/(sizeof(x)/sizeof(x[0]));
-	cout<<"ÃÖ´ñ°ª: "<<MAX<<endl;
-	cout<<"ÇÕ°è: "<<sum<<endl; 
-	cout<<"Æò±Õ: "<<avg<<endl;
+	cout<<"ìµœëŒ“ê°’: "<<MAX<<endl;
+	cout<<"í•©ê³„: "<<sum<<endl; 
+	cout<<"í‰ê· : "<<avg<<endl;
 	
 	
 	getSort(x,z);
 	//int x[10] = {0,};
-	//¹è¿­ ¾È °ªÀ» 0À¸·Î ÃÊ±â	 
+	//ë°°ì—´ ì•ˆ ê°’ì„ 0ìœ¼ë¡œ ì´ˆê¸°	 
 }
 
 void getSort(int arr[], int k){
@@ -155,7 +155,7 @@ void getSort(int arr[], int k){
 	for(x=0;x<k+1;x++){
 		if(arr[x]>arr[x+1]){
 			cout<<arr[x]<<endl;
-			temp = arr[x];arr[x]=arr[x+1];arr[x+1]=temp;//±³È¯  
+			temp = arr[x];arr[x]=arr[x+1];arr[x+1]=temp;//êµí™˜  
 			x=0;
 		}
 		else{
