@@ -40,7 +40,8 @@ user_뷰명: 해당 유저가 소유자(내가 만든 것)[user_tables, ...]
 ex)v$instance, v$session ...
 
 3. scott유저의 상태 확인하기
-user_objects, user_tables, ...
+user_objects, user_tables, user_constraints,
+user_tab_columns, user_cons_columns
 
 tablespace : 어느 곳에다가 테이블을 만들 것이가. 등..
 
