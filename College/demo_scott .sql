@@ -112,6 +112,15 @@ CREATE TABLE DUMMY (DUMMY NUMBER);
 
 INSERT INTO DUMMY VALUES (0);
 
+alter table emp
+add constraint pk_emp_empno primary key(empno);
+
+alter table dept
+add constraint pk_dept_empno primary key(deptno);
+
+alter table emp
+add constraint fk_emp_deptno foreign key(deptno) references dept(deptno);
+
 COMMIT;
 
 SET TERMOUT ON
