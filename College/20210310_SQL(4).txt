@@ -1,0 +1,68 @@
+인서트를 가장 밑에다 두는게 좋음..
+(demo_sccot을 수정 후 재실행)
+
+drop table로 인한 가비지 값들이 많이 발생
+
+desc user_objects
+select object_name, object_type
+from user_objects;
+
+쓰레기 확인
+show recyclebin
+
+비우기
+purge reclyclebin
+
+JOIN
+select b.constraint_name, b.table_name, b.column_name, a.constraint_type
+from user_constraints (inner) join a user cons_columns b
+	on a.constraint_name=b.constraint_name;
+(정확한 기준이 되는 것을 선택
+table name도 들어가지만.. 확실한 기준이 되지 못함.)
+
+정의안함 not defined, undefined
+변수를 특정못함 ambiguos varified..
+
+[함수지만.. 단일 함수를 보며 변수를 익힐 계획]
+
+*함수;function (내장함수 vs 사용자정의함수)
+	      (시스템변수 vs 사용자정의변수) ...
+1. 내장함수(=sql함수)
+1) 집계함수(=복수행함수)(sum, average, max, min ..) [대상이 되는 데이터가 하나 이상]
+
+2) 단일행함수(내꺼만 계산하면 된다.)
+
+[이제 처음으로 수업을 시작한다고 생각하시면 됩니다. ㅋㅋㄹㅃㅃ]
+-문자형(char, varchar2) 함수:upper, lower, length, concat, substr, lpad, rpad, ltrim, rtrim
+[varchar=가변길이]
+-숫자형(number)함수
+[다른 DB에 경우 정수, 실수를 나눔(float, .. etc)
+Oracle은 단 하나. 실수를 쓸 땐 (10,2) >> 전체자리10자리, 소수자리 2자리
+다른 DB에서 NUMBER써도 호환이 된다고..]
+-날짜형(date)함수:sysdate
+
+[교재 70p, 함수의 종류가 어떤 것들이 있는지 등을 살펴보는 용도 정도로.. 
+자주쓰는 것을 찾는 힘을 알 수 있게 될 것.]
+
+-변환함수
+	<to_date		to_number>
+날짜		문자		숫자
+	to_char>		<to_char
+[내가 출력하고자 하거나 입력할 때 묵시적으로 문자로 변환이 된다는 것을 기억하자.
+I/O자체가 형변환이 일어나고 있다는 것을..
+문자형으로 형변환을 함으로써 자연스럽게 함수를 만들 수 있다는 것..!]	
+
+[Type miscasting, 원인을 정확하게 알 때에 Function을 쓰기가 훨씬 좋다.]
+
+[묵시적 형변환이 일어났나? 명시적 형변환은 어떻게?]
+
+-null 함수**
+[단일함수에서 중요하게 봄. 데이터 사이언스에서 특히..
+값이 없음을 어떤 것으로 간주할 것인가?
+Null에 대한 대비를 항상 해주는 것이 필요하다.]
+
+-decode함수, case문(oracle advanced function;기능)
+[절차적인 언어는 아니지만.. 능률이 오르는 언어
+case문: switch ~ case]
+
+2.
