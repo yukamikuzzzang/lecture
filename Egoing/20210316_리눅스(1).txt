@@ -1,0 +1,66 @@
+-쉘을 이용한 기록관리(history)
+bash shell에서는 history 명령어 지원
+/etc/skel/.bash_profile 파일 수정
+ls -al
+
+.bash_profile을 고쳐야
+$HOME 사용자의 홈 디렉토리
+PATH- "$HOME/ .local/bin:$HOME/bin:$PATH
+
+#cd /etc/skel
+#vi .bash_profile
+
+파일 수정
+8줄 export HISTFILE=~/.bash_profile
+export HISTFILESIZE=100000			//1mb
+export HISTSIZE=1000
+export HISTTIMEFORMAT="%F %T : "
+
+readonly HISTFILE
+readonly HISTFILESIZE
+readonly HISTSIZE
+readonly HISTTIMEFORMAT
+(esc)
+:wq!
+
+.bash_profile <쉘 파일, 예전엔 그냥 껐다 켰는데
+ 지금은 다른 방식으로 한다고
+
+source .bash_profile
+. .bash_profile		//리눅스에서만 쓰이는 것.
+su 
+history
+내가 무엇을 몇시에 쳤는지를 다 알 수 있음.
+
+su - hoseo (su - 사용자명)
+... localhost ~]
+
+cat .bash_profile
+cat /etc/passwd
+
+su - cyber
+clear
+
+id
+
+cat .bash_profile
+파일 계정을 만들고 만들어라?
+
+자기계정은 자기 홈디렉토리에 숨겨진 파일
+/etc/skel/.bash_profile
+
+ls /home
+cyber su - cyber
+ls -al
+vi .bash_profile
+cd /etc/skel
+ls -al
+
+pwd (/etc/skel)
+
+cp .bash_profile /home/cyber
+복사를 하면 그 디렉토리에 사용자로 바뀌게 됨.
+
+cat .bash_profile
+(실행)
+source .bash_profile
