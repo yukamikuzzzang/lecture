@@ -1,5 +1,5 @@
-//°´Ã¼ÁöÇâÇÁ·Î±×·¡¹ÖI :C++
-#include <iostream> //ÀüÃ³¸®±â :ÀÔÃâ·Â Çì´õÆÄÀÏ 
+//ê°ì²´ì§€í–¥í”„ë¡œê·¸ë˜ë°I :C++
+#include <iostream> //ì „ì²˜ë¦¬ê¸° :ì…ì¶œë ¥ í—¤ë”íŒŒì¼ 
 #include <string>
 #include <time.h>
 #include <stdlib.h>
@@ -15,10 +15,10 @@ int main(){
 	int cnt = 0;
 	int e = 0;
 	
-	cout<<"Ã¹¹øÂ° code: "<<endl;
+	cout<<"ì²«ë²ˆì§¸ code: "<<endl;
 	getline(cin,code1);
 
-	cout<<"µÎ¹øÂ° code: "<<endl;
+	cout<<"ë‘ë²ˆì§¸ code: "<<endl;
 	getline(cin,code2);
 	
 	
@@ -41,7 +41,7 @@ int main(){
 		}		
 	}
 
-	cout<<endl<<"ÇØ¹ÖÄÚµå °Å¸®: "<<hamming<<endl; 
+	cout<<endl<<"í•´ë°ì½”ë“œ ê±°ë¦¬: "<<hamming<<endl; 
 	
 	
 	
@@ -54,10 +54,10 @@ int main(){
 	int sum = 0;
 	string name = "";
 	
-	cout<<"Áöµµ±³¼ö¸í? ";
+	cout<<"ì§€ë„êµìˆ˜ëª…? ";
 	getline(cin,name);
 	while(cnt< 5){
-		cout<<cnt+1<<"¹ø ÇĞ»ıÁ¡¼ö? ";
+		cout<<cnt+1<<"ë²ˆ í•™ìƒì ìˆ˜? ";
 		cin>>score[cnt];
 		
 		if(score[cnt]>=0 && score[cnt]<=100){
@@ -66,20 +66,20 @@ int main(){
 		cout<<endl<<sum<<endl;
 		cnt++;
 		}else{
-			cout<<"´Ù½ÃÀÔ·ÂÇØÁÖ¼¼¿ä";
+			cout<<"ë‹¤ì‹œì…ë ¥í•´ì£¼ì„¸ìš”";
 		}
 		
 	}
 		float avg=float(sum)/(cnt);
-		cout<<"ÇÕ= "<<sum<<" Æò±Õ= "<<avg;
+		cout<<"í•©= "<<sum<<" í‰ê· = "<<avg;
 */
 /*
 	char ch;
 	int cntA= 0;
 	int cntB= 0;
-	cout<<"¹®ÀÚ?";
+	cout<<"ë¬¸ì?";
 	while(cin>>ch){
-		cout<<"¹®ÀÚ?";
+		cout<<"ë¬¸ì?";
 		if(ch == 'a'){
 			cntA++;
 		}else if(ch == 'e'){
@@ -94,68 +94,68 @@ int main(){
 			cntB++;
 		}
 	} 
-	cout<<"¸ğÀ½ÀÇ ¼ö: "<<cntA; 
-	cout<<"ÀÚÀ½ÀÇ ¼ö: "<<cntB;
+	cout<<"ëª¨ìŒì˜ ìˆ˜: "<<cntA; 
+	cout<<"ììŒì˜ ìˆ˜: "<<cntB;
 */
 
-/*¹®Á¦1	
+/*ë¬¸ì œ1	
 	srand(time(NULL));
 	int cnt=0;
 	while(true){
 		srand(time(NULL));
 		int num1 = rand()%10+1;
-		cout<<"Ã¹ ¹øÂ°¼ö: "<<num1;
+		cout<<"ì²« ë²ˆì§¸ìˆ˜: "<<num1;
 		int num2 = rand()%10+1;
-		cout<<"µÎ ¹øÂ°¼ö: "<<num2;
-		cout<<"ÇÕÀº?";
+		cout<<"ë‘ ë²ˆì§¸ìˆ˜: "<<num2;
+		cout<<"í•©ì€?";
 		int anw;
 		cin>>anw;
 				
 		if((num1+num2) == anw){
-			cout<<" Á¤´ä...³¡";
+			cout<<" ì •ë‹µ...ë";
 			break;
 		}
-		cout<<"Æ²·È½À´Ï´Ù.";
+		cout<<"í‹€ë ¸ìŠµë‹ˆë‹¤.";
 		cnt++;
 	}
-	cout<<cnt<<" ¹ø Æ²·È½À´Ï´Ù.";
+	cout<<cnt<<" ë²ˆ í‹€ë ¸ìŠµë‹ˆë‹¤.";
 */	
 //	char name[11];
-//	cin >> name;	//°ø¹é¹ÌÆ÷ÇÔ, °ø¹é±îÁö¸¦ ÇÑ ¹®ÀÚ¿­·Î º¸°Ú´Ù. 
-//	cout<<"ÀÌ¸§Àº "<<name<<"ÀÔ´Ï´Ù."<<endl; 
+//	cin >> name;	//ê³µë°±ë¯¸í¬í•¨, ê³µë°±ê¹Œì§€ë¥¼ í•œ ë¬¸ìì—´ë¡œ ë³´ê² ë‹¤. 
+//	cout<<"ì´ë¦„ì€ "<<name<<"ì…ë‹ˆë‹¤."<<endl; 
 //	cin.ignore();
-//	cout <<"ÁÖ¼Ò¸¦ ÀÔ·ÂÇÏ¼¼¿ä>> ";
+//	cout <<"ì£¼ì†Œë¥¼ ì…ë ¥í•˜ì„¸ìš”>> ";
 //	char address[100];
 //	cin.getline(address,100, '\n'); //character
-//	cout<<"ÁÖ¼Ò´Â "<<address<<"ÀÔ´Ï´Ù."<<endl;
+//	cout<<"ì£¼ì†ŒëŠ” "<<address<<"ì…ë‹ˆë‹¤."<<endl;
 //	cout<<address[3]<<endl<<sizeof(address)<<endl; 
-//	cin.ignore();//¹öÆÛ Áö¿ì±â
+//	cin.ignore();//ë²„í¼ ì§€ìš°ê¸°
 //	string s,s2,s3="Apple", s4("banana");
-//	cin >> s;	//°ø¹é¹ÌÆ÷ÇÔ 
+//	cin >> s;	//ê³µë°±ë¯¸í¬í•¨ 
 //	cout<<"s = "<<s<<endl;
 //	cin.ignore(); 
-//	getline(cin,s2);//°ø¹éÆ÷ÇÔ,string 
-//		cout<<"s2 = "<<s2<<",3¹ø"<<s2[3]<<endl;
+//	getline(cin,s2);//ê³µë°±í¬í•¨,string 
+//		cout<<"s2 = "<<s2<<",3ë²ˆ"<<s2[3]<<endl;
 //	return 0; 
 //
 
 
 /*
-int x=100;//Àü¿ªº¯¼ö 
-void show(); //ÇÔ¼ö¿øÇü 
+int x=100;//ì „ì—­ë³€ìˆ˜ 
+void show(); //í•¨ìˆ˜ì›í˜• 
 
 cout<<"Hello"<<endl;
 show(5); 
 */
-	return 0;//½ÇÇà :F11 
+	return 0;//ì‹¤í–‰ :F11 
 }
 /*
-void show(int a) //Àü¿ªÇÔ¼ö
+void show(int a) //ì „ì—­í•¨ìˆ˜
 {
-	cout<<"¼î ÇÔ¼ö"<<endl;	
+	cout<<"ì‡¼ í•¨ìˆ˜"<<endl;	
 }
 */
 
-//C++¿Ïº®ÇÑ Ä¸½¶È­°¡ µÇÁø ¾ÊÀ½.
+//C++ì™„ë²½í•œ ìº¡ìŠí™”ê°€ ë˜ì§„ ì•ŠìŒ.
  
  
