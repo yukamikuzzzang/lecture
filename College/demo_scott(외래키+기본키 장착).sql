@@ -11,9 +11,9 @@
 -- SQL> @demobld_scott.sql
 --
 -- 
--- scott/tiger °èÁ¤ »ı¼º
+-- scott/tiger ê³„ì • ìƒì„±
 
--- system °èÁ¤À¸·Î Á¢¼ÓÇÑ´Ù.
+-- system ê³„ì •ìœ¼ë¡œ ì ‘ì†í•œë‹¤.
 SET FEEDBACK 1
 SET NUMWIDTH 10
 SET LINESIZE 80
@@ -29,7 +29,7 @@ SET SHOWMODE OFF
 -- DEFINE password_system     = &1
 
 -- CONNECT system/&&password_system
--- º»½ºÅ©¸³Æ®´Â system °èÁ¤¿¡¼­ ½ÇÇà½ÃÄÑ¾ßÇÑ´Ù.
+-- ë³¸ìŠ¤í¬ë¦½íŠ¸ëŠ” system ê³„ì •ì—ì„œ ì‹¤í–‰ì‹œì¼œì•¼í•œë‹¤.
 
 DROP USER scott CASCADE;
 
@@ -40,7 +40,7 @@ grant connect, resource to scott;
 alter user scott quota unlimited on users;
 alter user scott account unlock;
 
--- ¿©±â¼­ ºÎÅÍ´Â scott °èÁ¤À¸·Î Á¢¼ÓÇÑ´Ù.
+-- ì—¬ê¸°ì„œ ë¶€í„°ëŠ” scott ê³„ì •ìœ¼ë¡œ ì ‘ì†í•œë‹¤.
 conn scott/tiger;
 
 SET TERMOUT ON
