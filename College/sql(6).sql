@@ -1,5 +1,5 @@
 select empno, ename, sal, comm,
-        sal+sal*nvl(comm,0) as Áö±Ş±İ¾×,
+        sal+sal*nvl(comm,0) as ì§€ê¸‰ê¸ˆì•¡,
         case 
         when sal+sal*nvl(comm,0) >= 1000000  then 'good'
         when sal+sal*nvl(comm,0) >= 5000  then 'average'
@@ -7,47 +7,47 @@ select empno, ename, sal, comm,
         -- (sal+sal*nvl(comm,0) between 1 and 5000 (1<= x <=5000) 
         then 'bad'
         when sal+sal*nvl(comm,0) = 0   then 'no good'
-        end as Æò°¡
+        end as í‰ê°€
 from emp;
 
---decode¸¦ ½áµµ ¹«°ü
+--decodeë¥¼ ì¨ë„ ë¬´ê´€
 select empno, ename, --nvl(to_char(mgr),'not exists')
        decode(mgr,null,'not exists',mgr)
-       --¹¬½ÃÀûÀÎ Çüº¯È¯ÀÌ Àß ÀÌ·ç¾îÁö°í ÀÖÀ½À» ÀÇ¹Ì
+       --ë¬µì‹œì ì¸ í˜•ë³€í™˜ì´ ì˜ ì´ë£¨ì–´ì§€ê³  ìˆìŒì„ ì˜ë¯¸
 from emp;
 
 desc dept;
---ex1)¿ì¸® È¸»ç¿¡ ºÎ¼­°¡ ¸î °³¾ß?
-select count(*) as ºÎ¼­ from dept;
---count(*) Çà º°·Î ¼¿ ¼ö ÀÖ´Â À¯ÀÏÇÑ Áı°èÇÔ¼ö
+--ex1)ìš°ë¦¬ íšŒì‚¬ì— ë¶€ì„œê°€ ëª‡ ê°œì•¼?
+select count(*) as ë¶€ì„œ from dept;
+--count(*) í–‰ ë³„ë¡œ ì…€ ìˆ˜ ìˆëŠ” ìœ ì¼í•œ ì§‘ê³„í•¨ìˆ˜
 
 select empno, ename, sal, comm
 from emp;
 
 select empno, ename,sum(sal),sum(comm)
 from emp;
---sum(ename) ºÒ°¡
---nullÇÏ³ª¸¸ µé¾î°¡µµ »çÄ¢¿¬»êÀ» ÇÏ°ÔµÇ¸é ¹«Á¶°Ç nullÀÌ ³ª¿À°Ô µÊ.
---´Ü¼öÇà vs º¹¼öÇà(nullÀÌ ¹«Á¶°Ç Á¦¿Ü)
+--sum(ename) ë¶ˆê°€
+--nullí•˜ë‚˜ë§Œ ë“¤ì–´ê°€ë„ ì‚¬ì¹™ì—°ì‚°ì„ í•˜ê²Œë˜ë©´ ë¬´ì¡°ê±´ nullì´ ë‚˜ì˜¤ê²Œ ë¨.
+--ë‹¨ìˆ˜í–‰ vs ë³µìˆ˜í–‰(nullì´ ë¬´ì¡°ê±´ ì œì™¸)
 
 select count(empno), min(ename), min(sal), max(comm)
 from emp;
---min,max ¾Æ½ºÅ°ÄÚµå·Î º¯È¯ÇßÀ» ¶§¿¡ Å©±âºñ±³¸¦ ½ÃÀüÇÑ´Ù.
+--min,max ì•„ìŠ¤í‚¤ì½”ë“œë¡œ ë³€í™˜í–ˆì„ ë•Œì— í¬ê¸°ë¹„êµë¥¼ ì‹œì „í•œë‹¤.
 
 select distinct job 
 from emp;
---distinct Áßº¹ Á¦°Å
+--distinct ì¤‘ë³µ ì œê±°
 
 select count(distinct job), min(ename), min(sal), max(comm)
 from emp;
 
 select * from dept;
---ex2)»ç¿øÀÌ ÇöÀç ¼Ò¼ÓµÇ¾î ÀÖ´Â ºÎ¼­´Â ¸î °³¾ß?
+--ex2)ì‚¬ì›ì´ í˜„ì¬ ì†Œì†ë˜ì–´ ìˆëŠ” ë¶€ì„œëŠ” ëª‡ ê°œì•¼?
 select count(distinct deptno) from emp;
 
 select * from emp;
 select * from dept;
---ex3)ºÎ¼­º°·Î »ç¿øÀÇ salÀÌ ³·Àº ¼øÀ¸·Î deptno, dname, empno, ename, sal Ãâ·Â
+--ex3)ë¶€ì„œë³„ë¡œ ì‚¬ì›ì˜ salì´ ë‚®ì€ ìˆœìœ¼ë¡œ deptno, dname, empno, ename, sal ì¶œë ¥
 select e.deptno, d.dname, e.empno, e.ename, e.sal
 from emp e
 join dept d             --inner join
@@ -56,56 +56,56 @@ order by dname, sal asc;
 
 -----------------------------------1
 
-select d.deptno, d.dname, e.deptno, e.empno, e.ename, e.sal --Å×ÀÌºí º°·Î Âï¾îµĞ´Ù¸é ¹®Á¦ ¾øÀ½.
+select d.deptno, d.dname, e.deptno, e.empno, e.ename, e.sal --í…Œì´ë¸” ë³„ë¡œ ì°ì–´ë‘”ë‹¤ë©´ ë¬¸ì œ ì—†ìŒ.
 from emp e, dept d;
---cross join(±³Â÷Á¶ÀÎ), cartesian product
---³»°¡ ÇÊ¿äÇÑ Á¶°ÇÀ» Á÷Á¢ ºÎ¿©ÇØ¾ßÇÑ´Ù.
+--cross join(êµì°¨ì¡°ì¸), cartesian product
+--ë‚´ê°€ í•„ìš”í•œ ì¡°ê±´ì„ ì§ì ‘ ë¶€ì—¬í•´ì•¼í•œë‹¤.
 
 select e.deptno, d.dname, e.empno, e.ename, e.sal
-from emp e join dept d             --inner join, °°Àº °É Ã£¾Ò´Ù¸é equi join, natrual join
+from emp e join dept d             --inner join, ê°™ì€ ê±¸ ì°¾ì•˜ë‹¤ë©´ equi join, natrual join
 on e.deptno = d.deptno
 order by dname, sal asc;
---dnamae¿¡ ÀÖ´Â primary key´ö¿¡ order by¸¦ ¾ÈÇØµµ ±¦Âú¾Æº¸ÀÓ.
+--dnamaeì— ìˆëŠ” primary keyë•ì— order byë¥¼ ì•ˆí•´ë„ ê´œì°®ì•„ë³´ì„.
 
---ex4) ºÎ¼­º° »ç¿øÀÌ ¸î ¸íÀÎÁö, deptno, dname, ºÎ¼­º° ÀÎ¿ø¼ö¸¦ Ãâ·Â
-select e.deptno, d.dname, count(*) as "ºÎ¼­º° ÀÎ¿ø¼ö"
+--ex4) ë¶€ì„œë³„ ì‚¬ì›ì´ ëª‡ ëª…ì¸ì§€, deptno, dname, ë¶€ì„œë³„ ì¸ì›ìˆ˜ë¥¼ ì¶œë ¥
+select e.deptno, d.dname, count(*) as "ë¶€ì„œë³„ ì¸ì›ìˆ˜"
 from emp e join dept d
 on e.deptno = d.deptno
 group by e.deptno, d.dname;
---ºÎ¼­¸¸ ÀÖ´Â »óÅÂ¿¡¼­ ºÎ¼­º°·Î ÀÎ¿ø¼ö¸¦ »ø ¼ö ÀÖ´Â °Í.
---group by ÇÏ´Â ´ë»óÀÌ ÇÊ¿ä
---"Áı°èÇÔ¼ö"¸¦ ¾²±â À§ÇØ¼± selectÀı¿¡ ÀÖ´Â °ÍµéÀ» group by ¿¡µµ ½áÁÖ¾î¾ß.
---¾î¶² ±âÁØÀ¸·Î ´Ù½Ã ¸ğÀ» ¶§ ¾´´Ù.
+--ë¶€ì„œë§Œ ìˆëŠ” ìƒíƒœì—ì„œ ë¶€ì„œë³„ë¡œ ì¸ì›ìˆ˜ë¥¼ ìƒ ìˆ˜ ìˆëŠ” ê²ƒ.
+--group by í•˜ëŠ” ëŒ€ìƒì´ í•„ìš”
+--"ì§‘ê³„í•¨ìˆ˜"ë¥¼ ì“°ê¸° ìœ„í•´ì„  selectì ˆì— ìˆëŠ” ê²ƒë“¤ì„ group by ì—ë„ ì¨ì£¼ì–´ì•¼.
+--ì–´ë–¤ ê¸°ì¤€ìœ¼ë¡œ ë‹¤ì‹œ ëª¨ì„ ë•Œ ì“´ë‹¤.
 
---ex4-1) ºÎ¼­º° »ç¿øÀÌ ¸î ¸íÀÎÁö, deptno, dname, ºÎ¼­º° ÀÎ¿ø¼ö¸¦ Ãâ·ÂÇÏµÇ,
---5¸í ÀÌ»óÀÎ ºÎ¼­¸¸ ºÎ¼­º° ÀÎ¿ø¼ö ³ôÀº ¼øÀ¸·Î Ãâ·ÂÇÏ¶ó!
-select e.deptno, d.dname, count(*) as "ºÎ¼­º° ÀÎ¿ø¼ö"
+--ex4-1) ë¶€ì„œë³„ ì‚¬ì›ì´ ëª‡ ëª…ì¸ì§€, deptno, dname, ë¶€ì„œë³„ ì¸ì›ìˆ˜ë¥¼ ì¶œë ¥í•˜ë˜,
+--5ëª… ì´ìƒì¸ ë¶€ì„œë§Œ ë¶€ì„œë³„ ì¸ì›ìˆ˜ ë†’ì€ ìˆœìœ¼ë¡œ ì¶œë ¥í•˜ë¼!
+select e.deptno, d.dname, count(*) as "ë¶€ì„œë³„ ì¸ì›ìˆ˜"
 from emp e join dept d
 on e.deptno = d.deptno
 group by e.deptno, d.dname
 having count(*) >= 5
 order by count(*) desc;
 --select, (into), from, where, group by, having, order by...
---where Á¶°Ç : °³º°Á¶°Ç
---having Á¶°Ç: Á÷°èÁ¶°Ç(±×·ìÁ¶°Ç, º¹¼ö¿¡ ´ëÇÑ Á¶°Ç)
+--where ì¡°ê±´ : ê°œë³„ì¡°ê±´
+--having ì¡°ê±´: ì§ê³„ì¡°ê±´(ê·¸ë£¹ì¡°ê±´, ë³µìˆ˜ì— ëŒ€í•œ ì¡°ê±´)
 
---ex4-2)ºÎ¼­º° »ç¿øÀÌ ¸î¸íÀÎÁö 30¹ø ÀÌ»óÀÎ ºÎ¼­¹øÈ£¸¸À¸·Î deptno,dename, ºÎ¼­º° ÀÎ¿ø¼ö¸¦ Ãâ·ÂÇÏµÇ
---5¸íÀÌ»óÀÎ ºÎ¼­¸¸ ºÎ¼­º° ÀÎ¿ø¼ö ³ôÀº ¼øÀ¸·Î Ãâ·ÂÇÏ¶ó!
-select e.deptno, d.dname, count(*) as "ºÎ¼­º° ÀÎ¿ø¼ö"
+--ex4-2)ë¶€ì„œë³„ ì‚¬ì›ì´ ëª‡ëª…ì¸ì§€ 30ë²ˆ ì´ìƒì¸ ë¶€ì„œë²ˆí˜¸ë§Œìœ¼ë¡œ deptno,dename, ë¶€ì„œë³„ ì¸ì›ìˆ˜ë¥¼ ì¶œë ¥í•˜ë˜
+--5ëª…ì´ìƒì¸ ë¶€ì„œë§Œ ë¶€ì„œë³„ ì¸ì›ìˆ˜ ë†’ì€ ìˆœìœ¼ë¡œ ì¶œë ¥í•˜ë¼!
+select e.deptno, d.dname, count(*) as "ë¶€ì„œë³„ ì¸ì›ìˆ˜"
 from dept d join emp e
 on d.deptno = e.deptno
 where e.deptno >= 30
 group by e.deptno, d.dname
 having count(*) >= 5 --and e.deptno >= 30
 order by 3 desc;
---having ±× ÀüÃ¼ÀÇ ±×·ìÀÌ ´Ù ¸Â°Å³ª ±×·¸Áö ¾Ê°Å³ª.
+--having ê·¸ ì „ì²´ì˜ ê·¸ë£¹ì´ ë‹¤ ë§ê±°ë‚˜ ê·¸ë ‡ì§€ ì•Šê±°ë‚˜.
 
---ex4-3)ºÎ¼­º° »ç¿øÀÌ ¸î¸íÀÎÁö jobÀÌ PRESIDENTÀÎ »ç¿øÀ» Á¦¿ÜÇÏ°í deptno,dename, ºÎ¼­º° ÀÎ¿ø¼ö¸¦ Ãâ·ÂÇÏµÇ
---5¸íÀÌ»óÀÎ ºÎ¼­¸¸ ºÎ¼­º° ÀÎ¿ø¼ö ³ôÀº ¼øÀ¸·Î Ãâ·ÂÇÏ¶ó!
-select e.deptno, d.dname, count(*) as "ºÎ¼­º° ÀÎ¿ø¼ö"
+--ex4-3)ë¶€ì„œë³„ ì‚¬ì›ì´ ëª‡ëª…ì¸ì§€ jobì´ PRESIDENTì¸ ì‚¬ì›ì„ ì œì™¸í•˜ê³  deptno,dename, ë¶€ì„œë³„ ì¸ì›ìˆ˜ë¥¼ ì¶œë ¥í•˜ë˜
+--5ëª…ì´ìƒì¸ ë¶€ì„œë§Œ ë¶€ì„œë³„ ì¸ì›ìˆ˜ ë†’ì€ ìˆœìœ¼ë¡œ ì¶œë ¥í•˜ë¼!
+select e.deptno, d.dname, count(*) as "ë¶€ì„œë³„ ì¸ì›ìˆ˜"
 from dept d join emp e
 on d.deptno = e.deptno
-where job != 'PRESIDENT'    --ºÎ¼­º°·Î ¸ğ¿´Áö, jobº°·Î ¸ğÀÌÁø ¾Ê¾Ò±â¿¡ 
+where job != 'PRESIDENT'    --ë¶€ì„œë³„ë¡œ ëª¨ì˜€ì§€, jobë³„ë¡œ ëª¨ì´ì§„ ì•Šì•˜ê¸°ì— 
 group by e.deptno, d.dname
 having count(*) >= 5
 order by 3 desc;
@@ -113,13 +113,13 @@ order by 3 desc;
 select * from emp;
 -- != / <>
 
---ex5)ºÎ¼­º°·Î °¢ jobº° ÀÎ¿øÀÌ ¸î¸íÀÎÁö¸¦ deptno, dname, job, ÀÎ¿ø¼ö¸¦ ºÎ¼­º° jobº°·Î Á¤·ÄÇÏ¿© Ãâ·Â!
-select d.deptno, d.dname, e.job, count(*) as "ºÎ¼­º° ÀÎ¿ø¼ö"
+--ex5)ë¶€ì„œë³„ë¡œ ê° jobë³„ ì¸ì›ì´ ëª‡ëª…ì¸ì§€ë¥¼ deptno, dname, job, ì¸ì›ìˆ˜ë¥¼ ë¶€ì„œë³„ jobë³„ë¡œ ì •ë ¬í•˜ì—¬ ì¶œë ¥!
+select d.deptno, d.dname, e.job, count(*) as "ë¶€ì„œë³„ ì¸ì›ìˆ˜"
 from dept d join emp e on d.deptno = e.deptno
 group by d.deptno, d.dname, e.job
 order by d.dname, e.job;
 
---*Áı°èÇÔ¼ö¿Í °°ÀÌ ¾²´Â select list¿¡ ÀÖ´Â ³ª¸ÓÁö ÄÃ·³Àº ¹İµå½Ã group by¿¡ ¿Í¾ß ÇÑ´Ù!!
+--*ì§‘ê³„í•¨ìˆ˜ì™€ ê°™ì´ ì“°ëŠ” select listì— ìˆëŠ” ë‚˜ë¨¸ì§€ ì»¬ëŸ¼ì€ ë°˜ë“œì‹œ group byì— ì™€ì•¼ í•œë‹¤!!
 
 -----------------------------------2
 
@@ -128,7 +128,7 @@ deptno clerk manager president analyst saleman
 10      1       1       1
 20      2       1                2
 30      1       1                           4
-ºòµ¥ÀÌÅÍ, R¿¡¼­ÀÇ ½ºÅ¸ÀÏ.
+ë¹…ë°ì´í„°, Rì—ì„œì˜ ìŠ¤íƒ€ì¼.
 */
 select * from emp;
 /*
@@ -146,7 +146,7 @@ from emp
 group by deptno
 order by 1;
 
---ex6) empÀÇ salÀÌ salgradeÀÇ ¾î¶² grade¿¡ ÇØ´çµÇ´ÂÁö ename, job, sal, grade¸¦ jobº°·Î sal ³ôÀº ¼øÀ¸·Î Ãâ·Â!
+--ex6) empì˜ salì´ salgradeì˜ ì–´ë–¤ gradeì— í•´ë‹¹ë˜ëŠ”ì§€ ename, job, sal, gradeë¥¼ jobë³„ë¡œ sal ë†’ì€ ìˆœìœ¼ë¡œ ì¶œë ¥!
 select * from emp;
 select * from user_tables;
 
@@ -160,9 +160,9 @@ from emp e join salgrade s
     on e.sal between s.losal and s.hisal
 order by 2,3 desc;
 --non equi join
---on µÚ¿¡´Â Á¶°ÇÀıÀÌ ¿Ã ¼ö ÀÖ´Ù.
+--on ë’¤ì—ëŠ” ì¡°ê±´ì ˆì´ ì˜¬ ìˆ˜ ìˆë‹¤.
 
---ex6-1)empÀÇ salÀÌ salgradeÀÇ ¾î¶² grade¿¡ ÇØ´çµÇ´ÂÁö ename, job, sal, grade deptno, dnameÀ» jobº°·Î sal ³ôÀº ¼øÀ¸·Î Ãâ·Â!
+--ex6-1)empì˜ salì´ salgradeì˜ ì–´ë–¤ gradeì— í•´ë‹¹ë˜ëŠ”ì§€ ename, job, sal, grade deptno, dnameì„ jobë³„ë¡œ sal ë†’ì€ ìˆœìœ¼ë¡œ ì¶œë ¥!
 select e.ename, e.job, e.sal, s.grade, d.deptno, d.dname
 from emp e 
 join dept d on e.deptno = d.deptno
@@ -171,7 +171,7 @@ order by 2,3 desc;
 
 /*
  from A join B on ~ join C on ~
- Å×ÀÌºí °¹¼ö - 1 °³ÀÇ Á¶ÀÎÁ¶°Ç
+ í…Œì´ë¸” ê°¯ìˆ˜ - 1 ê°œì˜ ì¡°ì¸ì¡°ê±´
  E-S
  E-D
  S!-D
@@ -180,8 +180,8 @@ order by 2,3 desc;
  D-S-E (X)
 */
 
---ex6-1-2)empÀÇ salÀÌ salgradeÀÇ ¾î¶² grade¿¡ ÇØ´çµÇ´ÂÁö ename, job, sal, grade deptno, dnameÀ» jobº°·Î sal ³ôÀº ¼øÀ¸·Î Ãâ·Â!
---´Ü, salgrade emp dept ¼øÀ¸·Î Á¶ÀÎ
+--ex6-1-2)empì˜ salì´ salgradeì˜ ì–´ë–¤ gradeì— í•´ë‹¹ë˜ëŠ”ì§€ ename, job, sal, grade deptno, dnameì„ jobë³„ë¡œ sal ë†’ì€ ìˆœìœ¼ë¡œ ì¶œë ¥!
+--ë‹¨, salgrade emp dept ìˆœìœ¼ë¡œ ì¡°ì¸
 select * from salgrade;
 select e.ename, e.job, e.sal, s.grade, d.deptno, d.dname
 from salgrade s 
@@ -189,9 +189,9 @@ join emp e on e.sal >= s.losal and e.sal <= s.hisal
 join dept d on d.deptno = e.deptno
 order by 2,3;
 
---ex6-3)¸ğµç ºÎ¼­¿¡ ´ëÇÏ¿© empÀÇ salÀÌ salgradeÀÇ ¾î¶² grade¿¡ ÇØ´çµÇ´ÂÁö deptno, dname, ename, job, sal, gradeÀ» ºÎ¼­º°·Î jobº°·Î sal ³ôÀº ¼øÀ¸·Î Ãâ·Â!
---½ÃÇèÀ» º¸Áö ¾ÊÀº °æ¿ì.
---outer join!, ¿ŞÂÊ/¿À¸¥ÂÊ > ¿©ÁıÇÕ±îÁö..
+--ex6-3)ëª¨ë“  ë¶€ì„œì— ëŒ€í•˜ì—¬ empì˜ salì´ salgradeì˜ ì–´ë–¤ gradeì— í•´ë‹¹ë˜ëŠ”ì§€ deptno, dname, ename, job, sal, gradeì„ ë¶€ì„œë³„ë¡œ jobë³„ë¡œ sal ë†’ì€ ìˆœìœ¼ë¡œ ì¶œë ¥!
+--ì‹œí—˜ì„ ë³´ì§€ ì•Šì€ ê²½ìš°.
+--outer join!, ì™¼ìª½/ì˜¤ë¥¸ìª½ > ì—¬ì§‘í•©ê¹Œì§€..
 --LEFT, LIGHT, FULL OUTER JOIN
 select * from salgrade;
 select d.deptno, d.dname, e.ename, e.job, e.sal, s.grade
@@ -200,9 +200,9 @@ right join dept d on d.deptno = e.deptno
 left join salgrade s on e.sal >= s.losal and e.sal <= s.hisal
 order by 1,4,5 desc;
 
--- emp + dept(¸ğµç ºÎ¼­>>>>(RIGHT))
+-- emp + dept(ëª¨ë“  ë¶€ì„œ>>>>(RIGHT))
 
---ex6-4:6-3Âü°í salgrade emp dept ¼øÀ¸·Î Á¶ÀÎ
+--ex6-4:6-3ì°¸ê³  salgrade emp dept ìˆœìœ¼ë¡œ ì¡°ì¸
 select * from salgrade;
 select d.deptno, d.dname, e.ename, e.job, e.sal, s.grade
 from salgrade s 
@@ -210,12 +210,12 @@ join emp e on e.sal >= s.losal and e.sal <= s.hisal
 right join dept d on d.deptno = e.deptno
 order by 1,4,5 desc;
 
-/*ex7)¸ğµç ºÎ¼­¿¡ ´ëÇÏ¿© salÀÇ ÇÕ°è°¡ 1,000,000ÀÌ»óÀÌ¸é
-'good', 5000ÀÌ»óÀÌ¸é 'average', 1ÀÌ»ó 5000¹Ì¸¸ÀÌ¸é 'bad', 0ÀÌ¸é 'no pay',
-¾øÀ¸¸é 'not exists'·Î Æò°¡ÇÏµÇ
-deptno, dname, ºÎ¼­º° sal ÇÕ°è, Æò°¡¸¦ Ãâ·Â!*/
+/*ex7)ëª¨ë“  ë¶€ì„œì— ëŒ€í•˜ì—¬ salì˜ í•©ê³„ê°€ 1,000,000ì´ìƒì´ë©´
+'good', 5000ì´ìƒì´ë©´ 'average', 1ì´ìƒ 5000ë¯¸ë§Œì´ë©´ 'bad', 0ì´ë©´ 'no pay',
+ì—†ìœ¼ë©´ 'not exists'ë¡œ í‰ê°€í•˜ë˜
+deptno, dname, ë¶€ì„œë³„ sal í•©ê³„, í‰ê°€ë¥¼ ì¶œë ¥!*/
 
-select d.deptno, d.dname, sum(e.sal) as "ºÎ¼­º°salÇÕ°è",
+select d.deptno, d.dname, sum(e.sal) as "ë¶€ì„œë³„salí•©ê³„",
     case
         when sum(e.sal) >= 1000000 then 'good'
         when sum(e.sal) >= 5000 then 'average'
@@ -223,16 +223,16 @@ select d.deptno, d.dname, sum(e.sal) as "ºÎ¼­º°salÇÕ°è",
         when sum(e.sal) = 0 then 'no pay'
         else 'not exists'
         --is null
-    end as Æò°¡
+    end as í‰ê°€
 from dept d left join emp e
 on d.deptno = e.deptno
 group by d.deptno, d.dname
 order by 3 desc;
---pharsing ¼Óµµ°¡ ºü¸£´Ù.
+--pharsing ì†ë„ê°€ ë¹ ë¥´ë‹¤.
 
 
---ex8)¸ğµç ºÎ¼­¿¡ ´ëÇÏ¿© empÀÇ sal+sal*commÀÌ salgradeÀÇ ¾î¶² grade¿¡ ÇØ´çµÇ´ÂÁö deptno, dname, ename, job, sal, sal+sla*comm,grade¸¦ Ãâ·ÂÇÏµÇ
---¾ø´Â grade´Â '***'·Î Ç¥½ÃÇÏ°í ºÎ¼­º°·Î jobº°·Î sal ³ôÀº ¼øÀ¸·Î Ãâ·Â!
+--ex8)ëª¨ë“  ë¶€ì„œì— ëŒ€í•˜ì—¬ empì˜ sal+sal*commì´ salgradeì˜ ì–´ë–¤ gradeì— í•´ë‹¹ë˜ëŠ”ì§€ deptno, dname, ename, job, sal, sal+sla*comm,gradeë¥¼ ì¶œë ¥í•˜ë˜
+--ì—†ëŠ” gradeëŠ” '***'ë¡œ í‘œì‹œí•˜ê³  ë¶€ì„œë³„ë¡œ jobë³„ë¡œ sal ë†’ì€ ìˆœìœ¼ë¡œ ì¶œë ¥!
 
 select d.deptno, d.dname, e.ename, e.job, e.sal, e.sal+e.sal*nvl(e.comm,0), 
 /*
