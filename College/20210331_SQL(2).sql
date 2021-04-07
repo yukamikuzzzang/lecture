@@ -277,7 +277,7 @@ minus
 select employee_id
 from job_history;
 
---8
+--1-8
 select e.employee_id, e.first_name, e.last_name, j.job_id, j.job_title, d.department_id, d.department_name
 from departments d 
 right join employees e on e.department_id = d.department_id
