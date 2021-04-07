@@ -1,0 +1,833 @@
+--(1)
+--hr_user
+--1-7
+--decode로도 변환이 가능하다.
+
+select e.employee_id, e.first_name, e.last_name, count(j.h.star_date),
+--decode(count(*) = 1, 'one','zero',count(*) = 2,'two','many')
+case 
+    when count(j.employee_id) = 2 then 'two'
+    when count(j.employee_id) = 1 then 'one'
+    when count(j.employee_id) = 0 then 'zero'
+    else 'many'
+end as job이력
+from job_history j  right outer join employees e
+on j.employee_id = e.employee_id
+--where j.employee_id is NOT NULL
+group by e.employee_id, e.first_name, e.last_name
+order by 5;
+
+--1-8
+select e.employee_id, e.first_name, e.last_name, j.job_id, j.job_title, d.department_id, d.department_name
+from employees e right join jobs j
+on e.job_id = j.jo_idb
+left join departments d
+on d.department_id=e.employee_id
+left join job_history h
+on h.employee_id = e.employee_id
+where n.employee_id is null
+order by 1;
+
+--job이력이 없는 사원에 관하여
+--start_date : PK같은 존재
+
+--1-9
+--수업시간에 많이 했어요..
+
+--1-10
+--근속연수를 통해서 구하는 문제도 넘어가겠슘돠.
+
+
+--1-11
+--단, 부분이랑 insert 부분에 주의.
+select * from jobs; --기본 컬럼이 19개
+insert into jobs
+values('DBA','DBAdministrator',1000,3000);
+commit;
+
+select d.department_id, d.department_name, e.employee_id, e.first_name, j.job_id, j.job_title
+from departments d 
+left join employees e 
+on d.department_id = e.department_id
+full outer join jobs j on j.job_id=e.job_id
+order by 1;
+
+select * from departments;
+--무조건 적으로 full outer 하진 않도록 하기
+--cf . d   e   j
+--    27  107  20(개)
+--      left full
+--(다쪽에다가 맞추자.)
+
+--릴레이션 조건과 상관있는 것들을 따져야하니까..
+--모든 부서, 모든 job > full outer join
+--부서 있는 사원(106) vs 부서 없는 사원(1) : 107
+--부서 없던 사람은 딱 한 명
+--따질 것?
+--사원 있는 부서(11) vs 사원 없는 부서(16) : 27
+select department_id
+from departments
+minus
+select department_id
+from employees; --사원 없는 부서? 16개
+--사원 있는 job(19) vs 사원 없는 job(1) : 20
+select job_id
+from jobs
+minus
+select job_id
+from employees;
+
+--cf . d   e   j
+--    27  107  20(개)
+--      left full
+--(다쪽에다가 맞추자.)
+-- 16 + inner join(106) + 1 = 123(개)
+--총 123개가 나온다.
+--개수가 많아질수록 정확한 개수 파악이 중요하다.
+
+--1-12
+--self join을 이용한 문제
+--직속상사? manager_id
+--직속상사명? first join은 현재 찾을 수 없는 상태 << self join이 필요..
+--부하직원 employee_id, first_name
+select e1.manager_id, e1.employee_id, e2.first_name, e1.employee_id, e1.first_name
+from employees e1 join employees e2
+on e1.manager_id = e2.employee_id
+order by 1,3;
+
+--직속상사 없는 사람 다나와! > outer join
+-- ~순으로 낮은 거에서 높은 것으로.. 
+--순서는 오름차순이 기본이다.
+
+/*
+과제는 기말까지 해서 온라인으로 제출할 예정
+다음주까지 과제 4/14
+다다음주에는 수시평가 4/21 
+다다다음주에는 시험 4/28?
+*/
+
+--(2)
+--scott_user
+--sys_user에서 테이블을 미리 만듭시다.
+/*
+subquery(서브쿼리)
+1.()안에 작성한다.
+2.외부쿼리(=메인쿼리)와 비교할 때 알맞은 연산자를 사용
+(단일행/복수행 단일 컬럼/복수 컬럼)
+3.연관성이 있는 쿼리(correlated subquerry) 또는 없는 쿼리
+co- 끝날 때까지 같이 간다.
+4.group by, order by 절을 제외하고 모든 절에 사용 가능.
+    뿐만 아니라 모든 절을 사용가능.
+*/  
+--*복수행이 리턴될 때
+--- < any 서브쿼리 리턴값 중 최대값
+--- > any 서브쿼리 리턴값 중 최소값
+--- < all 서브쿼리 리턴값 중 최소값
+--- > all 서브쿼리 리턴값 중 최대값
+
+--ex-1 부서명이 'SALES'인 사원의 사번,이름?
+select * from dept;
+
+select e.empno, e.ename
+from emp e join dept d on e.deptno = d.deptno
+where dname='SALES';
+
+select empno, ename
+from emp
+where deptno in (select deptno from dept where dname='SALES');
+--퍼포먼스를 위해서라도 e. 등을 찍어놓자.
+--범용적으로 프로그램을 짤 수 있도록 하자.
+--사용자에게 인풋을 받을 때 잘못된 정보가 올 가능성이 높다.)
+--select from where having group by order by..
+
+-- in > equal + or
+-- 공집합이 나오더라도 에러가 아니다.
+-- 그래서 in은 서브쿼리에 사용하기 좋다.
+
+--ex-2 사번이 '7844'인 사원의 job과 동일한 job이 사원의 사번, 이름, job을 출력
+
+select empno, ename job
+from emp
+where job = (select job from emp where empno = '7844');
+
+select * from emp;
+desc user_tables
+select * from emp;
+desc emp;
+
+--ex-3 사번이 '7521'인 사원의 job과 동일하고 '7900'인 사번의 급여보다 많은
+--급여를 받는 사원의 사번, 이름, job, 급여를 출력
+
+select empno, ename, job, sal
+from emp
+where job = (select job from emp where empno = '7521') and 
+sal > (select sal from emp where empno = '7900');
+
+--ex-4 가장 적은 급여를 받는 사원의 사번, 이름, 급여 출력
+select empno, ename, sal
+from emp
+where sal = (select min(sal) from emp);
+--where절 좌측과 오른쪽에 있는 것이 최소 비교할 수 있는 값은 되어야함.
+
+
+--(2)
+--scott_user
+--sys_user에서 테이블을 미리 만듭시다.
+/*
+subquery(서브쿼리)
+1.()안에 작성한다.
+2.외부쿼리(=메인쿼리)와 비교할 때 알맞은 연산자를 사용
+(단일행/복수행 단일 컬럼/복수 컬럼)
+3.연관성이 있는 쿼리(correlated subquerry) 또는 없는 쿼리
+co- 끝날 때까지 같이 간다.
+4.group by, order by 절을 제외하고 모든 절에 사용 가능.
+    뿐만 아니라 모든 절을 사용가능.
+*/  
+--*복수행이 리턴될 때
+--- < any 서브쿼리 리턴값 중 최대값
+--- < any 서브쿼리 리턴값 중 최대값
+--- < any 서브쿼리 리턴값 중 최대값
+--- < any 서브쿼리 리턴값 중 최대값
+
+--ex-1 부서명이 'SALES'인 사원의 사번,이름?
+select * from dept;
+
+select e.empno, e.ename
+from emp e join dept d on e.deptno = d.deptno
+where dname='SALES';
+
+select empno, ename
+from emp
+where deptno in (select deptno from dept where dname='SALES');
+--퍼포먼스를 위해서라도 e. 등을 찍어놓자.
+--범용적으로 프로그램을 짤 수 있도록 하자.
+--사용자에게 인풋을 받을 때 잘못된 정보가 올 가능성이 높다.)
+--select from where having group by order by..
+
+-- in > equal + or
+-- 공집합이 나오더라도 에러가 아니다.
+-- 그래서 in은 서브쿼리에 사용하기 좋다.
+
+--ex-2 사번이 '7884'인 사원의 job과 동일한 job이 사원의 사번, 이름, job을 출력
+
+select empno, ename, job
+from emp 
+where job = 
+(select job 
+from emp
+where empno = '7884');
+
+
+desc user_tables
+select * from emp;
+desc emp;
+
+--ex-3 사번이 '7521'인 사원의 job과 동일하고 '7900'인 사번의 급여보다 많은
+--급여를 받는 사원의 사번, 이름, job, 급여를 출력
+
+select empno, ename, job, sal
+from emp
+where job = (select job from emp empno = '7521') and 
+sal > (select sal from emp where empno = '7900');
+
+select empno, ename, job, sal
+from emp
+where empno = '7900'; 
+
+--(3)
+--ex-5 부서별 최소급여 중에서 30번 부서의 최소급여보다는 큰 최소급여인 부서의 부서번호, 최소급여를 출력
+select deptno, min(sal) 
+from emp
+group by deptno
+having min(sal) >
+(select min(sal) from emp
+where deptno = '30');
+
+--조건 절엔 where나 having절
+--집계함수 이기에 having을 넣어주면 된다.
+
+select deptno, min(sal) 
+from emp
+group by deptno
+having min(sal) > any --all(and) == max(sal)
+--나온 모든 서브쿼리의 값보다 any 크거나 / and 크고
+(select sal from emp
+where deptno = '30');
+
+--데이터가 여러개 있을 때 any을 써주면 됩니다.
+
+--ex-6 job이 'CLERK'인 사원이 2명 이상 있는 부서의 부서명만 출력!
+--복수행에 대해선 무조건 집계함수를 써야..
+--join
+select d.dname, e.deptno, count(*)
+from dept d
+join emp e
+on d.deptno = e.deptno
+where job = 'CLERK'
+group by d.dname, e.deptno
+having count(*) >= 2;
+
+--그냥 having절로 쓰게 되면 select절에 대해서 그룹으로 쳐서 계산한다고 함..
+--단독으로 having절을 쓰는 경우 그룹에 걸린다고..!
+
+select dname, d.deptno
+from dept d 
+where deptno in (select deptno 
+                from emp  
+                where job = 'CLERK' 
+                group by deptno
+                having count(*) >= 2);
+--부서를 몰라..
+--deptno = ()
+--여러 개 있을 때에도 in을 넣을 수 있다.
+
+--correlated subquerry
+--연관성이 있는 서브쿼리, 단독으로 돌릴 수 없는 쿼리
+
+--부서에 있는 4개의 데이터 중 하나를 서브쿼리에 집어넣어서
+--자격이 있는지를 물어봄
+--맞으면 OK. 아니면 돌아감.
+--10 > 조건? >OK 찍고 NO(reject) 안찍고
+--20 > 조건? >OK 찍고 NO 안찍고
+--...
+
+select dname
+from dept d
+where 2 <=  (select count(*) 
+            from emp 
+            where job = 'CLERK' and d.deptno = deptno);
+--로컬의 우선순위가 높다.
+--밖에 있는 deptno를 쓸 수 없기에 돌지 않음.
+--메인 * 서브 >> 속도는 떨어짐.
+--correlated가 아니면 쓸 수 없는 것들이 있기 때문에..
+
+--서브쿼리
+--서브쿼리에서 돌리고 난 뒤 메인으로 넘기고 끝
+--correlated
+--메인의 칼럼을 끌고 들어가서 서브쿼리에서 각각 처리
+--퍼포먼스가 한참 떨어짐.
+
+--ex-6-1 job이 'CLERK'인 사원이 한 명이라도 있는 부서의 부서명을 출력
+select dname
+from dept d
+where 1 <=  (select count(*) 
+            from emp 
+            where job = 'CLERK' and d.deptno = deptno);
+--exists를 써보자.
+select dname
+from dept d
+where exists(select *
+            from emp 
+            where job = 'CLERK' and d.deptno = deptno);
+            
+select * from emp
+order by deptno, job;
+--exists 단항 연산자
+--한쪽 영역에서 데이터가 뭐라도 나오면 True
+--primary key나 * >> null인 경우를 안나오게 하기 위해..
+
+select d.dname, e.deptno, count(*)
+from dept d
+join emp e
+on d.deptno = e.deptno
+where job = 'CLERK'
+group by d.dname, e.deptno
+having count(*) < 1;--(X)
+--join
+select dname, d.deptno
+from dept d 
+where deptno not in (select deptno 
+                    from emp  
+                    where job = 'CLERK' 
+                    group by deptno
+                    having count(*) >= 1);
+                    
+select dname, d.deptno
+from dept d 
+where deptno in (select deptno 
+                    from emp  
+                    where job = 'CLERK' 
+                    group by deptno
+                    having count(*) < 1);--(X)
+--서브쿼리                    
+select dname
+from dept d
+where not exists(select *
+            from emp 
+            where job = 'CLERK' and d.deptno = deptno);
+--correlated subquery            
+--ex7)각 부서별로 최소급여를 받는 사원의 부서번호, 부서명, 사번, 이름, 급여를 출력!
+select d.deptno, d.dname, e.empno, e.ename, e.sal
+from dept d
+join emp e
+on d.deptno = e.deptno
+having e.sal = min(sal)
+group by d.deptno, d.dname, e.empno, e.ename, e.sal;
+
+
+--select d.deptno, d.dname, e.ename, e.empno, e.sal
+--from emp e, dept d
+--where e.deptno = d.deptno
+--group by d.deptno, d.dname, e.ename, e.empno, e.sal
+--having min(sal) = (select min(sal from emp);
+                
+--조건: 각 부서별로 최소급여를 받는 사원의
+select d.deptno, d.dname, e.empno, e.ename, e.sal
+from dept d join emp e
+on d.deptno = e.deptno
+where sal in (select min(sal) from emp group by deptno);
+
+--월급만 비교하게 될 경우
+--20번 부서에 950 받는 사람이 생길 경우 큰일난다고 함..
+--최소급여가 같은 사람이 튀어나올 수 있음
+--복수컬럼(열)
+
+select d.deptno, d.dname, e.empno, e.ename, e.sal
+from dept d join emp e
+on d.deptno = e.deptno
+where (e.deptno, e.sal) in (select deptno, min(sal) from emp group by deptno);
+
+--내가 하면서 그저 맞다고 생각하는 것을 거두라..
+--10번 부서면서 00달러인 사람..
+
+--correlated query
+select d.deptno, d.dname, e.empno, e.ename, e.sal
+from dept d join emp e
+on d.deptno = e.deptno
+where sal = (select min(sal) from emp where d.deptno = deptno);
+
+--어떤 사람을 뽑아야해..
+--메인 쿼리에서부터 끌고 들어와야
+--내 부서 안에서의 최솟값
+
+--select 절에서 서브쿼리
+--from 절에서 쓸 경우 cor~일 경우가 높음
+--join을 걸지 않고 서브쿼리
+--outer join 한 것 마냥 나온다고..
+select deptno, (select dname from dept where e.deptno = deptno) as 부서명,
+       empno, ename, sal
+from emp e 
+where (deptno, sal) in (select deptno, min(sal) from emp group by deptno);
+
+--ex-8)직속상사가 없는 사원을 포함해서 모든 사원의 부하직원사번, 부하직원명, 직속상사사번, 직속상사명을 출력!
+--1) select절에 cor~
+--2) 인라인 뷰(from절에 쓰는 서브쿼리) = inline view
+--3) self join
+
+--3)
+select e1.empno, e1.ename, e1.mgr, e2.ename
+from emp e1 left join emp e2
+on e1.mgr = e2.empno;
+--직속상사가 없는 사람까지 나옴.. with left outer join
+
+--1)
+select empno, ename, mgr, (select ename from emp where e.mgr = empno ) as 직속상사명 
+from emp e;
+
+--ex-9) 평균급여보다 많거나 같고 최대급여보다는 적은 급여를 받는 사원의 사번, 이름, 급여 출력!
+--select empno, ename, sal
+--from emp
+--where sal >= () and
+--sal <= ();
+
+select empno, ename, sal
+from emp
+where sal >= (select avg(sal) from emp) and
+sal <= (select max(sal) from emp);
+
+select empno, ename, sal
+from emp e join (select avg(sal) a, max(sal) b from emp) i
+    on e.sal >= i.a  and e.sal < i.b;
+    
+--ex-8)-2    
+select empno, ename, mgr, i.c
+from emp a left join (select empno b, ename c from emp) i 
+on a.mgr = i.b;
+
+select a.empno, a.ename, a.mgr, i.ename
+from emp a left join (select empno, ename from emp) i 
+on a.mgr = i.empno;
+
+--가상의 테이블을 만들기 위해..
+--안에 만들어놓은 것을 correlate로 잡아끄는 형태가 된다.
+--연관된 서브쿼리, 안에서 밖/ 밖에서 안으로 향하는 것 또한 cor~로 불림.
+--from 절에 서브쿼리를 쓰면 가상의 테이블을 쓸 수 있음. (바라보는 관점으로 생성한 뷰)
+--이전까진 다 물리적인 테이블이었다..
+
+select rownum, empno, ename
+from emp;
+
+--rownum 쿼리의 결과로 반환되는 로우에 붙혀지는 일련번호로 의사컬럼(sudo 컬럼:그저 의사만 전달하는 컬럼)
+--ex-10) 월급이 높은 순으로 사번, 이름, 월급을 상위 5명만 출력!
+select empno, ename, sal
+from (select empno, ename, sal from emp order by sal desc) 
+where rownum between 1 and 5; 
+
+select * from emp;
+
+--(2)
+--scott_user
+--sys_user에서 테이블을 미리 만듭시다.
+/*
+subquery(서브쿼리)
+1.()안에 작성한다.
+2.외부쿼리(=메인쿼리)와 비교할 때 알맞은 연산자를 사용
+(단일행/복수행 단일 컬럼/복수 컬럼)
+3.연관성이 있는 쿼리(correlated subquerry) 또는 없는 쿼리
+co- 끝날 때까지 같이 간다.
+4.group by, order by 절을 제외하고 모든 절에 사용 가능.
+    뿐만 아니라 모든 절을 사용가능.
+*/  
+--*복수행이 리턴될 때
+--- < any 서브쿼리 리턴값 중 최대값
+--- < any 서브쿼리 리턴값 중 최대값
+--- < any 서브쿼리 리턴값 중 최대값
+--- < any 서브쿼리 리턴값 중 최대값
+
+--ex-1 부서명이 'SALES'인 사원의 사번,이름?
+select * from dept;
+
+select e.empno, e.ename
+from emp e join dept d on e.deptno = d.deptno
+where dname='SALES';
+
+select empno, ename
+from emp
+where deptno in (select deptno from dept where dname='SALES');
+--퍼포먼스를 위해서라도 e. 등을 찍어놓자.
+--범용적으로 프로그램을 짤 수 있도록 하자.
+--사용자에게 인풋을 받을 때 잘못된 정보가 올 가능성이 높다.)
+--select from where having group by order by..
+
+-- in > equal + or
+-- 공집합이 나오더라도 에러가 아니다.
+-- 그래서 in은 서브쿼리에 사용하기 좋다.
+
+--ex-2 사번이 '7884'인 사원의 job과 동일한 job이 사원의 사번, 이름, job을 출력
+
+select empno, ename, job
+from emp 
+where job = 
+(select job 
+from emp
+where empno = '7884');
+
+
+desc user_tables
+select * from emp;
+desc emp;
+
+--ex-3 사번이 '7521'인 사원의 job과 동일하고 '7900'인 사번의 급여보다 많은
+--급여를 받는 사원의 사번, 이름, job, 급여를 출력
+
+select empno, ename, job, sal
+from emp
+where job = (select job from emp empno = '7521') and 
+sal > (select sal from emp where empno = '7900');
+
+select empno, ename, job, sal
+from emp
+where empno = '7900'; 
+
+--(3)
+--ex-5 부서별 최소급여 중에서 30번 부서의 최소급여보다는 큰 최소급여인 부서의 부서번호, 최소급여를 출력
+select deptno, min(sal) 
+from emp
+group by deptno
+having min(sal) >
+(select min(sal) from emp
+where deptno = '30');
+
+--조건 절엔 where나 having절
+--집계함수 이기에 having을 넣어주면 된다.
+
+select deptno, min(sal) 
+from emp
+group by deptno
+having min(sal) > any --all(and) == max(sal)
+--나온 모든 서브쿼리의 값보다 any 크거나 / and 크고
+(select sal from emp
+where deptno = '30');
+
+--데이터가 여러개 있을 때 any을 써주면 됩니다.
+
+--ex-6 job이 'CLERK'인 사원이 2명 이상 있는 부서의 부서명만 출력!
+--복수행에 대해선 무조건 집계함수를 써야..
+--join
+select d.dname, e.deptno, count(*)
+from dept d
+join emp e
+on d.deptno = e.deptno
+where job = 'CLERK'
+group by d.dname, e.deptno
+having count(*) >= 2;
+
+--그냥 having절로 쓰게 되면 select절에 대해서 그룹으로 쳐서 계산한다고 함..
+--단독으로 having절을 쓰는 경우 그룹에 걸린다고..!
+
+select dname, d.deptno
+from dept d 
+where deptno in (select deptno 
+                from emp  
+                where job = 'CLERK' 
+                group by deptno
+                having count(*) >= 2);
+--부서를 몰라..
+--deptno = ()
+--여러 개 있을 때에도 in을 넣을 수 있다.
+
+--correlated subquerry
+--연관성이 있는 서브쿼리, 단독으로 돌릴 수 없는 쿼리
+
+--부서에 있는 4개의 데이터 중 하나를 서브쿼리에 집어넣어서
+--자격이 있는지를 물어봄
+--맞으면 OK. 아니면 돌아감.
+--10 > 조건? >OK 찍고 NO(reject) 안찍고
+--20 > 조건? >OK 찍고 NO 안찍고
+--...
+
+select dname
+from dept d
+where 2 <=  (select count(*) 
+            from emp 
+            where job = 'CLERK' and d.deptno = deptno);
+--로컬의 우선순위가 높다.
+--밖에 있는 deptno를 쓸 수 없기에 돌지 않음.
+--메인 * 서브 >> 속도는 떨어짐.
+--correlated가 아니면 쓸 수 없는 것들이 있기 때문에..
+
+--서브쿼리
+--서브쿼리에서 돌리고 난 뒤 메인으로 넘기고 끝
+--correlated
+--메인의 칼럼을 끌고 들어가서 서브쿼리에서 각각 처리
+--퍼포먼스가 한참 떨어짐.
+
+--ex-6-1 job이 'CLERK'인 사원이 한 명이라도 있는 부서의 부서명을 출력
+select dname
+from dept d
+where 1 <=  (select count(*) 
+            from emp 
+            where job = 'CLERK' and d.deptno = deptno);
+--exists를 써보자.
+select dname
+from dept d
+where exists(select *
+            from emp 
+            where job = 'CLERK' and d.deptno = deptno);
+            
+select * from emp
+order by deptno, job;
+--exists 단항 연산자
+--한쪽 영역에서 데이터가 뭐라도 나오면 True
+--primary key나 * >> null인 경우를 안나오게 하기 위해..
+
+select d.dname, e.deptno, count(*)
+from dept d
+join emp e
+on d.deptno = e.deptno
+where job = 'CLERK'
+group by d.dname, e.deptno
+having count(*) < 1;--(X)
+--join
+select dname, d.deptno
+from dept d 
+where deptno not in (select deptno 
+                    from emp  
+                    where job = 'CLERK' 
+                    group by deptno
+                    having count(*) >= 1);
+                    
+select dname, d.deptno
+from dept d 
+where deptno in (select deptno 
+                    from emp  
+                    where job = 'CLERK' 
+                    group by deptno
+                    having count(*) < 1);--(X)
+--서브쿼리                    
+select dname
+from dept d
+where not exists(select *
+            from emp 
+            where job = 'CLERK' and d.deptno = deptno);
+--correlated subquery            
+--ex7)각 부서별로 최소급여를 받는 사원의 부서번호, 부서명, 사번, 이름, 급여를 출력!
+select d.deptno, d.dname, e.empno, e.ename, e.sal
+from dept d
+join emp e
+on d.deptno = e.deptno
+having e.sal = min(sal)
+group by d.deptno, d.dname, e.empno, e.ename, e.sal;
+
+
+--select d.deptno, d.dname, e.ename, e.empno, e.sal
+--from emp e, dept d
+--where e.deptno = d.deptno
+--group by d.deptno, d.dname, e.ename, e.empno, e.sal
+--having min(sal) = (select min(sal from emp);
+                
+--조건: 각 부서별로 최소급여를 받는 사원의
+select d.deptno, d.dname, e.empno, e.ename, e.sal
+from dept d join emp e
+on d.deptno = e.deptno
+where sal in (select min(sal) from emp group by deptno);
+
+--월급만 비교하게 될 경우
+--20번 부서에 950 받는 사람이 생길 경우 큰일난다고 함..
+--최소급여가 같은 사람이 튀어나올 수 있음
+--복수컬럼(열)
+
+select d.deptno, d.dname, e.empno, e.ename, e.sal
+from dept d join emp e
+on d.deptno = e.deptno
+where (e.deptno, e.sal) in (select deptno, min(sal) from emp group by deptno);
+
+--내가 하면서 그저 맞다고 생각하는 것을 거두라..
+--10번 부서면서 00달러인 사람..
+
+--correlated query
+select d.deptno, d.dname, e.empno, e.ename, e.sal
+from dept d join emp e
+on d.deptno = e.deptno
+where sal = (select min(sal) from emp where d.deptno = deptno);
+
+--어떤 사람을 뽑아야해..
+--메인 쿼리에서부터 끌고 들어와야
+--내 부서 안에서의 최솟값
+
+--select 절에서 서브쿼리
+--from 절에서 쓸 경우 cor~일 경우가 높음
+--join을 걸지 않고 서브쿼리
+--outer join 한 것 마냥 나온다고..
+select deptno, (select dname from dept where e.deptno = deptno) as 부서명,
+       empno, ename, sal
+from emp e 
+where (deptno, sal) in (select deptno, min(sal) from emp group by deptno);
+
+--ex-8)직속상사가 없는 사원을 포함해서 모든 사원의 부하직원사번, 부하직원명, 직속상사사번, 직속상사명을 출력!
+--1) select절에 cor~
+--2) 인라인 뷰(from절에 쓰는 서브쿼리) = inline view
+--3) self join
+
+--3)
+select e1.empno, e1.ename, e1.mgr, e2.ename
+from emp e1 left join emp e2
+on e1.mgr = e2.empno;
+--직속상사가 없는 사람까지 나옴.. with left outer join
+
+--1)
+select empno, ename, mgr, (select ename from emp where e.mgr = empno ) as 직속상사명 
+from emp e;
+
+--ex-9) 평균급여보다 많거나 같고 최대급여보다는 적은 급여를 받는 사원의 사번, 이름, 급여 출력!
+--select empno, ename, sal
+--from emp
+--where sal >= () and
+--sal <= ();
+
+select empno, ename, sal
+from emp
+where sal >= (select avg(sal) from emp) and
+sal <= (select max(sal) from emp);
+
+select empno, ename, sal
+from emp e join (select avg(sal) a, max(sal) b from emp) i
+    on e.sal >= i.a  and e.sal < i.b;
+    
+--ex-8)-2    
+select empno, ename, mgr, i.c
+from emp a left join (select empno b, ename c from emp) i 
+on a.mgr = i.b;
+
+select a.empno, a.ename, a.mgr, i.ename
+from emp a left join (select empno, ename from emp) i 
+on a.mgr = i.empno;
+
+--가상의 테이블을 만들기 위해..
+--안에 만들어놓은 것을 correlate로 잡아끄는 형태가 된다.
+--연관된 서브쿼리, 안에서 밖/ 밖에서 안으로 향하는 것 또한 cor~로 불림.
+--from 절에 서브쿼리를 쓰면 가상의 테이블을 쓸 수 있음. (바라보는 관점으로 생성한 뷰)
+--이전까진 다 물리적인 테이블이었다..
+
+select rownum, empno, ename
+from emp;
+
+--rownum 쿼리의 결과로 반환되는 로우에 붙혀지는 일련번호로 의사컬럼(sudo 컬럼:그저 의사만 전달하는 컬럼)
+--ex-10) 월급이 높은 순으로 사번, 이름, 월급을 상위 5명만 출력!
+select empno, ename, sal
+from (select empno, ename, sal from emp order by sal desc) 
+where rownum between 1 and 5; 
+
+select * from emp;
+
+--(2)
+--scott_user
+--sys_user에서 테이블을 미리 만듭시다.
+/*
+subquery(서브쿼리)
+1.()안에 작성한다.
+2.외부쿼리(=메인쿼리)와 비교할 때 알맞은 연산자를 사용
+(단일행/복수행 단일 컬럼/복수 컬럼)
+3.연관성이 있는 쿼리(correlated subquerry) 또는 없는 쿼리
+co- 끝날 때까지 같이 간다.
+4.group by, order by 절을 제외하고 모든 절에 사용 가능.
+    뿐만 아니라 모든 절을 사용가능.
+*/  
+--*복수행이 리턴될 때
+--- < any 서브쿼리 리턴값 중 최대값
+--- > any 서브쿼리 리턴값 중 최소값
+--- < all 서브쿼리 리턴값 중 최소값
+--- > all 서브쿼리 리턴값 중 최대값
+
+--ex-1 부서명이 'SALES'인 사원의 사번,이름?
+select * from dept;
+
+select e.empno, e.ename
+from emp e join dept d on e.deptno = d.deptno
+where dname='SALES';
+
+select empno, ename
+from emp
+where deptno in (select deptno from dept where dname='SALES');
+--퍼포먼스를 위해서라도 e. 등을 찍어놓자.
+--범용적으로 프로그램을 짤 수 있도록 하자.
+--사용자에게 인풋을 받을 때 잘못된 정보가 올 가능성이 높다.)
+--select from where having group by order by..
+
+-- in > equal + or
+-- 공집합이 나오더라도 에러가 아니다.
+-- 그래서 in은 서브쿼리에 사용하기 좋다.
+
+--ex-2 사번이 '7844'인 사원의 job과 동일한 job이 사원의 사번, 이름, job을 출력
+
+select empno, ename job
+from emp
+where job = (select job from emp where empno = '7844');
+
+select * from emp;
+desc user_tables
+select * from emp;
+desc emp;
+
+--ex-3 사번이 '7521'인 사원의 job과 동일하고 '7900'인 사번의 급여보다 많은
+--급여를 받는 사원의 사번, 이름, job, 급여를 출력
+
+select empno, ename, job, sal
+from emp
+where job = (select job from emp where empno = '7521') and 
+sal > (select sal from emp where empno = '7900');
+
+--ex-4 가장 적은 급여를 받는 사원의 사번, 이름, 급여 출력
+select empno, ename, sal
+from emp
+where sal = (select min(sal) from emp);
+--where절 좌측과 오른쪽에 있는 것이 최소 비교할 수 있는 값은 되어야함.
+
+
+
+
+
+
+
+
+
