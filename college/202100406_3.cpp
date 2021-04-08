@@ -16,18 +16,18 @@ Circle::Circle(){
 }
 
 int main(){
-	cout << "»ı¼ºÇÏ°íÀÚ ÇÏ´Â ¿øÀÇ °³¼ö?";
+	cout << "ìƒì„±í•˜ê³ ì í•˜ëŠ” ì›ì˜ ê°œìˆ˜?";
 	int n, radius;
-	cin >> n; //¿øÀÇ °³¼ö ÀÔ·Â
+	cin >> n; //ì›ì˜ ê°œìˆ˜ ì…ë ¥
 	
-	Circle *p = pArray = new Circle[n]; //n°³ÀÇ Circle ¹è¿­ »ı¼º
+	Circle *p = pArray = new Circle[n]; //nê°œì˜ Circle ë°°ì—´ ìƒì„±
 	for(int i=0;i<n;i++){
-		cout<<p->getArea()<<''; //¿øÀÇ ¸éÀû Ãâ·Â
+		cout<<p->getArea()<<''; //ì›ì˜ ë©´ì  ì¶œë ¥
 		if(p->getArea()>= 100 && p ->getArea() <= 200)
 			count++;
 		p++; 
 	} 
-	cout<<endl<<"¸éÀûÀÌ 100¿¡¼­ 200 »çÀÌÀÎ ¿øÀÇ °³¼ö´Â "<< cout<<endl;
+	cout<<endl<<"ë©´ì ì´ 100ì—ì„œ 200 ì‚¬ì´ì¸ ì›ì˜ ê°œìˆ˜ëŠ” "<< cout<<endl;
 	
-	delete [] pArray; //°´Ã¼ ¹è¿­ ¼Ò¸ê 
+	delete [] pArray; //ê°ì²´ ë°°ì—´ ì†Œë©¸ 
 }
