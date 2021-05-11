@@ -1,0 +1,48 @@
+우리가 정보처리산업기사 때 배웠던 키의 종류들은 
+"개념적"인 것들이었다는 것.
+
+check(ck)(not null 포함): Valid Value
+ex) gender:Male / Female
+
+컬럼의 값을 제한, 그 값들의 범위를 제한, 다른 컬럼과의 비교(주문날짜 <= 배송날짜)도 가능
+
+Constraint로 Not null이 따로 있진 않다(라고 보기도 한다.)
+[SQLd 다른 DB에 대한 내용들도 같이 나오기 때문에..]
+
+default(df):오라클은 제약조건으로 보지 않음
+이걸 제약조건으로 보는 DB도 있음.
+
+[SQL문법은 같이 이해하면서 나가는 것이 좋음. 기존 오라클 doc가 이해하기 어렵기에..]
+
+alter table emp
+add constraint pk_emp_empno primary key(empno);
+
+alter table dept
+add constraint pk_dept_empno primary key(deptno);
+
+alter table emp
+add constraint fk_emp_deptno foreign key(deptno) references dept(deptno);
+
+[constraint Name도 이름을 맞추어주는게 좋다.]
+
+5. 제약조건 확인하기
+select owner, constraint_name, 
+constraint_type, table_name, search_condition,r_constraint_name
+from user_constraints;
+
+Constraint Name과 다른 컬럼에 걸렸는지 알 수 없기 때문..
+
+
+desc user_tab_columns;(3번에 해당)
+
+select table_name, column_name, data_type
+from user_tab_columns
+order by 1,2;
+(table_name을 1번, column_name을 2번)
+
+CONSTRAINTS_NAME + CONSTARAINT_TYPE + TABLE_NAME + COLUMN_NAME 
+
+user_constraints > 컬럼명이 안나옴
+user_cons_columns > constraints_type이 안나옴
+
+JOIN을 해서 내가 보고 싶은 네가지를 다 보면 됨. 

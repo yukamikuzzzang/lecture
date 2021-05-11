@@ -1,0 +1,82 @@
+6. 샘플스키마 에서 scott이 안깔린다면 demo_scott.sql을 다운받아봐요.
+버전이 올라가게 되면 사용자의 이름을 바꾸던지 하는 것이 필요할 수도 있음.
+그 부분은 기억하기로 하자.
+
+scott/tiger(유저/비밀번호)
+sys/user 권한으로 실행시키도록 하면
+이전에 만든 것들이 잘 나온다.
+
+HR유저는 EXPIRED & LOCKED 되어있음.
+SCOTT유저는 OPEN 상태
+
+*SCOTT 접속하기
+1.SCOTT 사용자 확인하기
+2.alter user scott identified by tiger account unlock;
+
+conn scott/tiger (일반유저기에 따로 붙이진 않음)
+conn(ect) 
+
+하지만 show user을 통해서 확인했을 때
+sccot에 접속되지 않음을 알 수 있음.
+그래서 유저(세션)를 새로 만들어주도록 함.
+
+시스템이 어떻게 설계되어있는지 확인해보도록 하자.
+유저 확인하는 방법: desc user_
+
+*시스템뷰 287p ~ 288p
+사용자가 요구하는 것을 반영하는 뷰. =데이터 딕셔너리
+
+=데이터 딕셔너리뷰(DD) + 
+동적성능(Dynamic Performance) 뷰<서버관리용, 테이블 스페이스 배치, 백업 & 리커버리, 데이터 파일 사이즈 등등..>
+
+static DataView + DP = DD 이렇게 부르기도..
+
+네이밍룰(이름짓기)
+dba_뷰명:	 db에 존재하는 모든 것(dba만 사용)[dba_users, dba_objects, dba_tables, dba_indexs, dba_views, ...],
+all_뷰명: 해당 유저에게 권한이 있는 것(나한테 권한이 있는 것들.), 
+user_뷰명: 해당 유저가 소유자(내가 만든 것)[user_tables, ...] 
+
+동적성능 뷰:v$뷰명 [최근 버전엔 v_$뷰명 이런식으로 표시하는 듯]
+ex)v$instance, v$session ...
+
+3. scott유저의 상태 확인하기
+user_objects, user_tables, user_constraints,
+user_tab_columns, user_cons_columns
+
+tablespace : 어느 곳에다가 테이블을 만들 것이가. 등..
+
+Constraints, Key, Index
+[명확하게 제약조건을 나누지 않고 책 여기저기로 가면서 실무에 들어가는 것들을 배우는 중.]
+
+7장 제약조건;oracle에서 말하는 제약조건 외에도 몇가지가 더 있음.
+4. 제약 조건 설정하기
+PK primary key		
+식별자, 유일성(unique), not null, 짧을수록 좋음, 대표성이 더 짙은 쪽을 택하는 쪽이 좋음: 학번 + 주민번호
+자동으로 별도의 인덱스 파일을 생성. + 그만큼의 부하가 생길 수도
+
+FK foreign key		
+자식역할일 때 생기는 키.(참조하려는 것)
+1:1(서브타입으로 하는 경우도 있음) 1:다 다:1 다:다(교차 엔티티로 터뜨림.)
+FK가 될 수 있는 것은 PK + UK + Unique Index도 가능.
+
+[현실세계에 있는 것을 바탕으로 
+컴퓨터 세계에 들고 와야 의미가 있음.]
+
+FK로 잡히는 친구는? 
+무조건 Unique Index로 걸진 않는다.
+회사마다 다름.
+oracle은 따로 잡아주지 않지만..
+나머지 대체키들에 대해서는 non unique index로 잡아주기
+
+UK unique key, 대체키
+=secondary key
+=alternat(ive)e key
+(in oracle)
+
+PK나 UK모두 Constraints를 걸게 되면 Constraint도 걸리게 됨.
+
+CK check(ck)(not null 포함)
+DF defualt
+[모델링에 좀 더 중요하게 생각할 것임] 
+
+Entity Relation(그림)

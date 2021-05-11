@@ -1,0 +1,52 @@
+select upper('abc') from dual; > 대문자
+" lower " > 소문자
+" length " > 길이
+
+select concat('abc','defg') from dual; > 두 개를 합쳐줌
+select 'abc'||'defg' from dual;	          > 이 둘은 같다고 한다.
+select substr('abcdef',2,3) from dual; > 2번째에서 3개 가져와라
+select lpad('abcdef,10) from dual; > 10자리 중 남은 왼쪽 자리를 공백으로 채워라
+select lpad('abcdef,10,'=') from dual; > 남은 왼자리를 '='로 채움
+[Left pad(채운다.]		
+select lpad('abcdef,5) from dual; > abcde (왼쪽부터 밀어넣으며 가장 오른쪽에 있던 것이 잘림)
+select rpad('abcdef',5) from dual;
+[오른쪽 정렬하고 있다., rpad든 lpad든 글자수가 적어지면 똑같이 잘려나간다..]
+select length(rtrim('abce       ')) from dual;
+select ltrim('           abcd') from dual;
+
+ex1) emp에 'smith'(대/소문자 구분X)을 찾아서 ename, sal을 출력!
+
+select ename, sal
+from emp
+where upper(ename) = 'SMITH'; 
+
+ex2) emp에서 empno, ename, sal을 출력
+ename은 오른쪽 정렬, sal은 왼쪽 정렬
+rpad lpad
+
+select empno, rpad(ename,10), lpad('$'||sal,10)
+from emp;
+
+[문자형이 가장 쉽다고 합니다. 하하하]
+
+날짜형 함수
+select to_char(sysdate,'yyyy') from dual; 
+[연도를 추출하는 함수를 따로 할 필요가 없다.
+오직 형변환만..]
+
+select to_char(sysdate,'mm') from dual; 
+select to_char(sysdate,'dd') from dual; 
+select to_char(sysdate,'day') from dual; 	수요일/Wed..
+select to_char(sysdate,'mon') from dual; 	3월 / Mar
+
+'80/12/24' 문자형에서 년도만 뽑아내라.
+select to_char(to_date('80/12/24'),'yyyy') from dual; 	       (밑에 결과와 같음)
+select to_char(to_date('80/12/24','rr/mm/dd'),'yyyy') from dual;  (rr = 50년이상은 19--)
+select to_char(to_date('80/12/24','yy/mm/dd'),'yyyy') from dual; (yy = 20--)
+
+ex3)sysdate를 '10-3월-21' 포맷으로 출력하라.
+dd-mon-yy
+
+select to_char(sysdate,'dd-mon-yy') from dual;
+
+ex4) hiredate의 요일이 '수요일'이나 '금요일'인 사원의 ename, hiredate 요일을 출력하라

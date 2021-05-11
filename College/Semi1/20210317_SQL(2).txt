@@ -1,0 +1,151 @@
+ex3-1)문자열 '80/03/17'을 입력받아서 연도 네자리만 출력하라
+select to_char(to_date('80/03/17'),'yyyy'); //1980
+select to_char(to_date('80/03/17','rr/mm/dd'),'yyyy'); //1980
+select to_char(to_date('80/03/17','yy/mm/dd'),'yyyy'); //1980
+
+y2k 50년 이후 > 19xx
+     50년 이전 > 18xx
+
+ex4)hiredate의 요일이 '수요일'이나 '금요일'인 사원의 ename, hiredate 요일을 출력하라!
+select ename, hiredate, to_char(hiredate,'day') as "요 일"
+from emp
+where to_char(hiredate,'day') in ('수요일','금요일'); 
+
+ex5)hiredate의 월이 '2월'이나 '12월'인 사원의 ename,hire를 출력하라!
+select ename, hiredate, to_char(hiredate,'mon') as "월"
+from emp
+where trim(to_char(hiredate,'mon')) in ('2월', '12월');
+
+...
+select ename, hiredate, length(to_char(hiredate,'mon') as "월")
+from emp;
+
+모두 3칸으로 인식하는 것을 확인할 수 있음.
+2월 다음에 공백이 있기 때문에..
+...
+
+select ename, hiredate, to_char(hiredate,'mon') as "월"
+from emp
+where rtrim(to_char(hiredate,'mon')) in ('2월', '12월');	//trim도 가능
+
+trunc: 반올림..?
+select trunc(sysdate-hiredate)
+from emp;
+
+날짜 - 날짜는 가능(=일자)
+그 외에는 불가(+, *, /, ...)
+
+select trunc((sysdate-hiredate)/365)
+from emp;
+
+//근속연수: 몇 년동안 다녔는지..?
+select trunc((sysdate-hiredate)/365)
+from emp;
+
+select to_char(1234567.89,'999,999,999.99')
+from dual;
+//어떤 숫자가 와도 다 할 수 있도록 여유롭게.. (세자리 마다 , 주기)
+
+select to_char(1234567.89,'000,000,000.00')
+from dual;
+//꽉 채우거나 0으로 채워야 할 때
+
+select to_char(-1234567.89,'000,000,000.00s')
+from dual;
+//001, ... .89- (음수 기호를 앞으로 이동시킴)
+
+//$앞에다가 쓰는 경향이 강해서 앞으로 나오는 듯.
+select to_char(-1234567.89,'000,000,000.00L')
+from dual;
+//L :National Language Quarency; 컴퓨터에 따라 영향을 받음.
+//... ... \
+
+ex7)'-$1,234,567.89'를 숫자로 출력하라.
+select to_number('-$1,234,567.89','$999,999,999.99')
+from dual;
+
+달러나 이런 것 때문에 포맷이 필요.
+-부호의 경우 어차피 숫자의 영역이기에 포맷을 굳이 맞추어줄 필요가 없음.
+
+/*
+select to_number(to_char(-1234567.89,'000,000,000.00L'),'999,999,999.99L')
+from dual;
+*/L도 마찬가지.
+
+ex8) emp에서 sal*comm값이 1000000보다 작은 사원만
+empno, ename, sal, comm, sal*comm(지급금액)을 출력하라
+
+*NVL: Null Value
+(다른 거 두 개 있지만 얘가 주축.)
+comm의 널값이 문제..
+//
+사용법
+nvl(널의 해당하는 속성, 널 대신 들어가는 값) 
+//
+select empno, ename, sal, comm, nvl(sal*comm,0) as 지급금액
+from emp
+where sal*nvl(comm,0) < 1000000;
+
+oracle 사이트에서 도움말을 볼 수 있음.
+SQL 문법이 그리 어려운 것까지는 아님.
+
+ex9)emp에서 comm값이 null인 경우는 '해당없음'으로, 아니면 원래 값이 출력되도록
+empno, ename, sal, comm을 출력하라!
+
+select empno, ename, sal, lpad(nvl(to_char(comm),'해당없음'),10)
+from emp;
+
+//comm의 type을 바꿔서 nvl에 집어넣자..!
+//묵시적인 변환이 이루어지지 않는다면 ERROR!
+
+*Decode function?
+if 절 같은 친구? like 3항 연산자?
+
+decode(comm, null,'해당없음', 0, 'zero', comm)
+comm이 null이면 '해당없음'
+	0 이면  'zero'
+	아니면 comm
+3항 연산자처럼 쓸 땐 comm = null이 먹는다고 한다.
+묵시적인 형변환이 잘 이루어지는 function이다.
+
+*Case function?
+decode에 비해 명시적 변환을 더 요구함.
+
+//lpad 오른쪽 정렬>왼쪽 부터 채움
+//rpad 왼쪽 정렬>오른쪽 부터 채움
+
+select empno, ename, sal,
+rpad(case comm
+    when null then '해당없음'
+    when  0 then 'zero'
+    else to_char(comm)    
+end,10) as 상여금
+from emp;
+
+
+select empno, ename, sal,
+rpad(case 
+    when comm=null then '해당없음'
+    when  comm=0 then 'zero'
+    else to_char(comm,'9,999')    
+end,10) as 상여금
+from emp;
+
+ex10)hiredate를 이용해 근속연수를 계산하여
+만10년 > '10돈', 만20년 > '20돈', 만30년 > '30돈', 만40년 > '40돈', 아니면 '*'
+ename, hiredate, 근속연수, 황금열쇠대상자를 출력
+
+
+select ename, hiredate, trunc((sysdate-hiredate)/365) as "근속 연수" ,
+/*decode(trunc((sysdate-hiredate)/365),10,'10돈','20','20돈','30','30돈','40','40돈','*') as "황금열쇠대상자"*/
+case   trunc((sysdate-hiredate)/365)
+        when  10  then '10돈'
+        when  20  then '20돈'
+        when  30  then '30돈'
+        when  40  then '40돈'
+        else '*'
+end as 황금열쇠대상자
+from emp;
+
+
+
