@@ -1,0 +1,1 @@
+web, mybatis, thyleaf, h2, lombok 스프링시간에 필요한 것들

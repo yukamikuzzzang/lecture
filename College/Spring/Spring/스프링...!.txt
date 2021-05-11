@@ -1,0 +1,138 @@
+Spring MVC
+DAO Data Access Object
+자기가 하는 것에 충실한 경향.
+엘답 파일 캐시..
+데이터에 대한 접근, 읽고/쓰고
+
+작업들을 추상화하여 다양한 DataAccess를 추상화해서 제공
+내부적인 디테일은 몰라도 그 패턴은 비슷하게 간다.
+JDBC, JPA etc...
+
+어떤 기술에 종속적이지 않게 만들었다..
+데이터 BEAN, 특정 프렝임워크에 종속적..
+
+@Repository
+
+예외 추상화
+SQLException
+구체적인 예외를 던져주는 역할.
+try~catch SQLException, IOException 
+
+RuntimeException > 돌다가 에러뜨면 알려줌.
+CheckException > 무조건 try~catch
+
+예외 처리를 한 곳에 모아서 처리할 수 있음. AOP개념이 녹아있는..
+JDBC 데이터 액세스 추상화 > 스프링 메뉴얼에 있음.
+
+대부분의 작업은 스프링이 추상화해줌.(JDBC Template)
+YOU
+-커넥션 파라미터 정의
+(JDBC > 데이터)
+-SQL 정의
+-파라미터 정의
+-결과값을 사용자가 정의
+
+with @Autowired
+Boot > 는 디비 부분도 자동으로 되어있다.
+Thread Safe
+
+SimpleJdbcCall
+>내장 프로시저
+PL/SQL;Oralce ,TSQL;MS
+DB내에서 미리 처리하고 올 수 있다.
+표준이 없음. 호환성이 엉망.. (클라우드의 등장..)
+>>은행에 잔존하는 스토어드 프로시저
+카뱅이 유일하게 MYSQL사용..
+
+Call of Statement >> SQL로 함수를 짜는 것.
+**공부를 할 수록 할 코딩이 줄어든다.**
+
+RowMapper
+BeanPropertyRowMapper
+
+SimpleJdbcInsert
+테이블명...> Hash_Map
+
+쿼리정의
+루프 돌리기.
+나머지 단순작업은 스프링이 해준다.
+
+insert delete update도 
+다 내가 해야돼?
+
+insert delete update select 쿼리도 
+다 알아서 해준다..?!
+
+JK
+
+JPA를 학습해서 그걸로 바꾼다고 해보자..
+기존 코드에서 repo만 바꾸면 된다.
+책임이 분리되어 있기에
+서비스 로직은 바뀔 이유가 없다..>!
+
+대부분의 비용지출에서 유지보수가 대부분을 차지한다.
+
+crud
+Create Read Upade Delete
+
+Material Design
+가로 3줄...> 메뉴
+
+모바일과 웹을 다 맞춰서 하기 힘들기에..
+front와 back을 나눔.
+
+지금은 좀 나은데..
+옛날엔 IE 따로 chrome 따로..
+
+99% 스프링 웹 개발.
+어떤 방식으로 동작하는지?
+
+강의에 적혀있는 것을 보며 보자.
+
+
+Front Controller [모든 요청을 받음]
+
+Controller 요청을 위임:delegate
+>>데이터를 주고받을 model을 만든다.
+
+model을 front controller에게 줌.
+model 을 View Template에게 줌. (그려..!)
+다 그려서 돌려줌.
+
+그리고 나서 응답.
+
+이 과정이 내부에서 계속 반복하며 등장.
+Spring MVC.
+
+Filter(SQLInjection 등을 거림)
+>Dispatch..
+>Controller
+
+Dispatcher Servlet <..Bean
+Front Conroller:패턴 의 역할.
+
+Handler Mapping
+
+Resolver .. 무언가를 찾는다.
+예외 처리에 대한 내용을 찾는다.
+
+
+View Resolver 뷰를 그리는 친구를 찾는 것.
+@Controller ; 직접 뷰를 리턴
+@RestController : JSON을 리턴 : API
+
+멤버 서비스..
+Controller는 리파지토리를 건들지 않는 게 좋다.
+Service에서 건들도록 하자.
+
+//도메인 객체를 그대로 보내는 것은 별로 좋지 않음.
+//회원목록을 알고 싶었는데.. 비밀번호까지 발견하는..
+
+스프링 캐시
+주문 회전 시스템.
+각기 다른 프로그래밍 언어를 사용하는 프로그램 간의 의사소통을 할 떄때에..
+
+메세지 큐를 통해 각기 결제수단에 맞게 맞추어서 보내줌.
+
+코딩보다.. 비즈니스 코딩을 어떻게 코딩을 녹여내야할지
+설계를 어떻게 할지를 고민해보자...!

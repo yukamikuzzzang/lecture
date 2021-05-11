@@ -1,0 +1,40 @@
+[
+	{
+		"name" : "슈퍼일식점",
+		"address " : "강서구 가양동 ... ~"
+		"menu" : [
+			{
+				"name" : "개맛나는 짜장면",
+				"price" : 15000
+			}
+			]
+	},
+	
+]
+
+jsoup
+DOM Tree
+도메인 객체
+
+JSON
+음식점.java
+
+name:
+private String name
+private Stinrg address
+
+Jackson
+: java json
+ObjectMapper
+
+rest.api
+
+
+
+DOM Tree
+class order_list
+크롤링에서 json파일로 주는 것이 진리
+
+한국영화진흥원
+
+json파일
