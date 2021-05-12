@@ -1,0 +1,83 @@
+(1)
+C++
+함수 중복 개념
+디폴트 매개 변수
+static 속성!
+
+함수중복; 객체지향 언어에서만 존재; 다형성
+function overloading
+
+중복가능 범위
+보통 함수들 사이, 클래스의 멤버 함수들 사이, 상속 관계에 있는 기본클래스/ 파생 클래스 멤버 함수들 사이
+
+성공조건
+중복된 함수들의 이름 동일
+매개 변수 타입이 다르거나 개수가 달라야 함
+리턴 타입은 함수 중복과 무관
+
+함수 이름을 구분할 필요가 없고,
+잘못 호출하는 실수도 줄일 수 있음
+
+
+실인수(메인 부분에 들어가는 수), 가인수(매개변수)
+
+*생성자 함수 중복
+객체 생성 시, 매개 변수를 통해 다양한 초기값 전달.
+
+*소멸자는 함수 중복 X
+한 클래스에선 오직 하나.
+
+(2)
+디폴트 매개 변수(default parameter)
+매개 변수 = 디폴트 값
+
+void main(int id, string text="Hello");
+
+msg(10);		//text부분에 디폴트 값 부여
+msg(20,"Good Morning");
+msg();		//아이디값이 없기에 불가능
+msg("Hello"); 	//아이디 타입에 안맞음
+
+void g(int a, int b =0, int c =0, int d =0)
+g(10) > g(10,_,_,_)
+g(10,5) > g(10,5,_,_)
+..
+
+*디폴트 매개 변수를 가진 함수 선언 및 호출.
+*디폴트 매개 변수의 장점 - 함수 중복 간소화
+
+*형 변환으로 인한 함수의 모호성.
+실수형의 기본형은 double
+
+float square(float a) {}
+double square(double d) {}
+cout << square(3.0) >>double
+cout<< square(3) >> ?!
+
+int add(int a, int b){}
+int add(int a, int&b){} <<reference
+
+int main(){
+int s = 10, t= 20
+cout<<add(s,t) 	<<참조 변수의 모호성
+}
+
+
+void msg(int id){}
+void msg(int id, string s =""){}
+
+msg(5,"Good morning");
+msg(6);	<<??? 함수 호출 모호
+
+
+static 멤버/ non-static 멤버
+static 멤버: 프로그램 시작 시 생성
+사용 범위; 선언된 범위, 접근 지정에 따름
+
+non-static 멤버
+객체 생성 시 생성
+객체마다 객체 내에 생성
+
+32p!!
+static 멤버 사용: 객체의 멤버로 접근, 클래스명과 범위 지정 연산자(::)로 접근
+(어떤 객체들이 와도 다 공유한다는 뜻.

@@ -1,0 +1,76 @@
+LVM Logical Volume Manager
+여러 개의 물맂리적 저장 장치를 하나의 논리적 저장 장치처럼 사용 
+OR 하나의 물리적 저장 장치를 여러 개의 논리적 저장 장치처럼 사용
+
+PV Physical Volume   하드디스크의 파티션
+VG Volume Group        PV에 대해 그룹을 만듦.
+LV Logical Volume      VG를 파티션 나눌 때 생기는 파티션
+PE Physical Extent     PV는 일정한 블록의 PE를 가짐.
+LE Logical Extent        LV도 일정한 블록의 LE를 가짐.
+File system
+
+PV > VG > LV > File System
+
+fdisk /dev/sdb
+1. type을 LVM으로 변경
+
+Command (m for help) : t
+Partition number (1..) : 2
+Hex code (type L to .. ) : 8e
+
+2. PV(Physical Volume) 생성
+#pvcreate /dev/sdb1
+#pvcreate /dev/sdb2
+#pvscan 
+#pvdisplay
+
+3. VG(Volume Group) 생성
+#vgcreate lvmDisk /dev/sdb1 /dev/sdb2
+#vgscan
+#vgdisplay
+
+4. LV(Logical Volume) 생성
+#lvcreate -L 350G lvm Disk -n lvmOne
+#lvcreate -L 250G lvm Disk -n lvmTwo
+#lvcreate -L 100G lvm Disk -n lvmThree
+#lvscan
+#lvdisplay lvmDisk
+
+5. 파일시스템 생성
+#mkfs.ext4    /dev/lvmDisk/lvmOne
+#mkfs.ext4    /dev/lvmDisk/lvmTwo
+#mkfs.ext4    /dev/lvmDisk/lvmThree
+
+6. LV mount
+#mount /dev/lvmDisk/lvmOne    /backup
+#mount /dev/lvmDisk/lvmTwo    /logfile
+#mount /dev/lvmDisk/lvmThree    /compress
+
+7. 마운트 확인
+#mount
+
+*VG에 PV 추가
+fdisk > /dev/sdb3의 파일 시스템을 8e로 변경
+vgextend 명령 사용
+  vgdisplay -v lvmDisk
+  vgextend lvmDisk /dev/sdb3
+  vgdisplay -v lvmDisk
+
+*VG에서 PV제거
+  vgreduce lvmDisk /dev/sdb3
+  vgdisplay -v lvmDisk
+
+*VG 이름 바꾸기
+  vgrename lvmDisk lv_Disk
+  pvdisplay	OR vgdisplay
+  pvscan		OR vgscan
+
+*LVM 제거
+마운트 해제
+  umount /backup
+lvremove 명령어
+  lvremove /dev/lv_Disk/lvmOne
+vgremove 명령어
+  vgremove lv_Disk
+pv remove 명령어
+ pv remove /dev/sdb1

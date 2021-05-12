@@ -1,0 +1,92 @@
+demsg 
+
+uquota
+gquota >> 그룹에게 부여
+
+home에 대해서만 defaults.uquota.gqutoa가 필요?
+
+/home 쿼터 설정
+홈 디렉토리가 생각이 안날 때..
+lvscan 해주기.
+mapper에 있는 친구라면 이미 lvm이 적용되어있음.
+
+[root@192 miku]# ls /home
+miku  pink  white
+[root@192 miku]# umount /home/
+umount: /home/: not mounted.
+[root@192 miku]# umount /home
+umount: /home: not mounted.
+[root@192 miku]# lvscan
+  ACTIVE            '/dev/mergeDisk/md1' [50.00 GiB] inherit
+  ACTIVE            '/dev/mergeDisk/md2' [50.00 GiB] inherit
+  ACTIVE            '/dev/mergeDisk/md3' [50.00 GiB] inherit
+  ACTIVE            '/dev/mergeDisk/md4' [50.00 GiB] inherit
+  ACTIVE            '/dev/cl/swap' [1.00 GiB] inherit
+  ACTIVE            '/dev/cl/root' [<8.00 GiB] inherit
+[root@192 miku]# mount -o uquota.gqutoa /dev/cl-home /home
+mount: /home: special device /dev/cl-home does not exist.
+[root@192 miku]# mount -o uquota.gqutoa /dev/cl/home /home
+mount: /home: special device /dev/cl/home does not exist.
+[root@192 miku]# 
+
+vi /etc/fstab
+>> defaults,uquota, gquota
+
+해당 사항을 설정하게 되면 어떤 사항들이 들어가는지 알 수 있음.
+계정을 만들면서 디폴트로 들어가는 애들들이 있다고..
+
+#xfs_quota -x -c limit bsoft=4g bhard=5g  사용자계정 /home 
+(<<홈에있는 사용자; 기본은 최대 50g)
+각각의 사용자에게 주고싶은 만큼 주면 됨.
+
+(실제에선 프로그램에 반복문을 이용해서 한다고 함..)
+(전에는 edit quota를 이용해서 수정했다고 함.)
+edquota black << 예전 방식.
+bsoft, bhard
+
+soft? 
+사용자가 사용할 수 있는 실제 계정 용량
+할당 용량 부족시 경고메시지 전달
+
+hard?
+사용자가 사용할 수 있는 절대 용량
+초과시 사용 불가
+절대용량(hard)은 soft보다 밙반드시 큼.
+
+inodes(soft=0, hard=0) 
+현재쓰고 있는 파일의 갯수를 나타냄.
+
+블럭 > 용량
+repquota:report quota
+자신의 계정 쿼터 용량 상태를 확인할 때
+repquota > 관리자가 보는 것.
+quota -v 자신의 계정용량을 확인
+
+유예기간 Grace Period
+edquota -t
+hard limit 범위 내에서 계정 용량을 초과하여 사용할 수 있도록..
+
+계정용량을 초과하여 사용할 수 있도록 한시적으로 적용되는 기간.
+default 7일.
+
+repquota -t..
+절대용량을 사용할 수 있는 기간.
+
+
+****
+리눅스 특 파일 하나씩 밖에 압축이 안됨.
+gzip <<파일 하나 압축
+tar cvfz root.tar.gz *
+cfz
+압축
+c:create
+f:file
+z:zip
+v:visual(vision) 
+
+압축해제
+xvfz
+x:extract 
+
+tar cvfz 압축파일명 대상
+
