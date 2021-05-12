@@ -388,3 +388,83 @@ end;
 exec p_sum01(30)
 
 select * from testemp;
+--<7> >>>02랑 01이랑 위치가 바뀜..
+--procedure p_insert01 이름으로 testemp 테이블에 insert하는 프로시저를 만들어라.
+
+create or replace procedure p_insert02(v_empno testemp.empno%type,
+                                       v_ename testemp.ename%type,
+                                       v_sal testemp.sal%type,
+                                       v_deptno testemp.deptno%type)
+is
+    v_sumsal testemp.sumsal%type;
+begin
+    insert into testemp
+    values(v_empno,v_ename,v_sal,v_deptno,null,null); --유도 에트리뷰트는 사용자에게 입력받는 것이 아니기에
+    --sumsal이 항상 무결해야하나 계산해야만 할 것은 아님..
+/*    
+    select sum(sal)
+    into v_sumsal
+    from testemp
+    where deptno = v_deptno;
+
+    if v_deptno = 10 then
+        v_sumsal:=0;
+    end if;
+    if v_sumsal >= 10000 then
+        dbms_output.put_line('10000 over!');
+    end if;
+    
+    update testemp
+    set sumsal=(select sum(sal)
+            from testemp
+            where deptno = v_deptno)
+    where deptno = v_deptno;
+*/
+    p_sum01(v_deptno);    
+    commit;
+exception
+when others then
+        dbms_output.put_line(sqlcode||' '||sqlerrm); --errm: error message
+    rollback; --이전 단계로 돌아가겠다는 뜻.
+end;
+/
+
+exec p_insert01(9998,'KIM',2000,20);
+
+select * from testemp;
+--일일이 클라이언트에 의해서 처리하는 것 보다
+--서버에서 처리한 뒤에 보내는 것이 편하고 조아요
+
+--<7-1> 7번을 바탕으로 p_insert02 생성
+--단, 부서번호가 10번이면 sumsal을 0으로 갱신
+--sumsal이 10000이상이면 '10000 over!'라는 메세지 출력
+create or replace procedure p_insert01(v_empno testemp.empno%type,
+                                       v_ename testemp.ename%type,
+                                       v_sal testemp.sal%type,
+                                       v_deptno testemp.deptno%type)
+is
+begin
+    insert into testemp
+    values(v_empno,v_ename,v_sal,v_deptno,null,null); --유도 에트리뷰트는 사용자에게 입력받는 것이 아니기에
+    --sumsal이 항상 무결해야하나 계산해야만 할 것은 아님..
+    
+    update testemp
+    set sumsal=(select sum(sal)
+                from testemp
+                where deptno = v_deptno)
+    where deptno = v_deptno;
+    commit;
+exception
+    when others then
+            dbms_output.put_line(sqlcode||' '||sqlerrm); --errm: error message
+    rollback; --이전 단계로 돌아가겠다는 뜻.
+end;
+/
+
+select * from testemp;
+exec p_insert02(9996,'PARK',50,10);
+exec p_insert02(9995,'PARK',50,10);
+
+--PL/SQL에 용도?
+--여러개를 한 번의 작업단위로 인정하는 것이 트랜잭션
+--사용자의 요구사항을 다 반영하기 위해서 나온 친구라고 할 수 있다.
