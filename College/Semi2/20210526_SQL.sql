@@ -1,5 +1,5 @@
---0. SCOTT À¯Àú°¡ CTAS±â¹ýÀ¸·Î testdept, testemp µÎ°³ÀÇ Å×ÀÌºíÀ» ¸¸µé¾ú´Ù. 
---¾Ë¸Â´Â Å×ÀÌºí º¯°æ, ÀúÀå ÇÁ·Î½ÃÀú ¹× Æ®¸®°Å¸¦ ÀÛ¼ºÇÏ½Ã¿À.
+--0. SCOTT ìœ ì €ê°€ CTASê¸°ë²•ìœ¼ë¡œ testdept, testemp ë‘ê°œì˜ í…Œì´ë¸”ì„ ë§Œë“¤ì—ˆë‹¤. 
+--ì•Œë§žëŠ” í…Œì´ë¸” ë³€ê²½, ì €ìž¥ í”„ë¡œì‹œì € ë° íŠ¸ë¦¬ê±°ë¥¼ ìž‘ì„±í•˜ì‹œì˜¤.
 drop table testemp;
 create table testemp
     as select empno, ename, sal, deptno
@@ -9,81 +9,81 @@ create table testdept
     as select deptno, dname
     from dept;
     
---1. Å×ÀÌºí¿¡ pk_testdept¸íÀ¸·Î primary key Á¦¾àÁ¶°Ç Ãß°¡ÇÏ¶ó
+--1. í…Œì´ë¸”ì— pk_testdeptëª…ìœ¼ë¡œ primary key ì œì•½ì¡°ê±´ ì¶”ê°€í•˜ë¼
 desc user_constraints
 
 select constraint_name, constraint_type, table_name, search_condition, r_constraint_name
 from user_constraints
 where table_name in('TESTDEPT','TESTEMP');
---nullº¸´Ù default°¡ ÀÖ´Ù¸é default°¡ ¿ì¼±¼øÀ§°¡ ´õ ³ôÀ½.
---ÇÁ¶óÀÌ¸Ó¸® °°Àº Á¦¾àÁ¶°ÇÀÌ ¾ø´Ù´Â °ÍÀ» È®ÀÎÇÒ ¼ö ÀÖÀ½.
+--nullë³´ë‹¤ defaultê°€ ìžˆë‹¤ë©´ defaultê°€ ìš°ì„ ìˆœìœ„ê°€ ë” ë†’ìŒ.
+--í”„ë¼ì´ë¨¸ë¦¬ ê°™ì€ ì œì•½ì¡°ê±´ì´ ì—†ë‹¤ëŠ” ê²ƒì„ í™•ì¸í•  ìˆ˜ ìžˆìŒ.
 
 alter table testdept
 add constraint pk_testdept_deptno primary key (deptno);
---Á¦¾àÁ¶°Ç¸í; Å¸ÀÔ_Å×ÀÌºí¸í_ÄÃ·³¸í
+--ì œì•½ì¡°ê±´ëª…; íƒ€ìž…_í…Œì´ë¸”ëª…_ì»¬ëŸ¼ëª…
 
---2. testemp Å×ÀÌºí¿¡ pk_testemp¸íÀ¸·Î primary key Á¦¾àÁ¶°Ç Ãß°¡ÇÏ¶ó
+--2. testemp í…Œì´ë¸”ì— pk_testempëª…ìœ¼ë¡œ primary key ì œì•½ì¡°ê±´ ì¶”ê°€í•˜ë¼
 alter table testemp
 add constraint pk_testemp_empno primary key(empno);
 
---3. testemp Å×ÀÌºí¿¡ fk_deptno2¸íÀ¸·Î foreign key Á¦¾àÁ¶°Ç Ãß°¡ÇÏ¶ó
+--3. testemp í…Œì´ë¸”ì— fk_deptno2ëª…ìœ¼ë¡œ foreign key ì œì•½ì¡°ê±´ ì¶”ê°€í•˜ë¼
 alter table testemp
 add constraint fk_testemp_deptno 
 foreign key(deptno) references testdept(deptno);
---parent table°ú ÀÌ¸¦ ÂüÁ¶ÇÑ ÄÃ·³¸íÀ» °°ÀÌ ½áÁÖ±â.
+--parent tableê³¼ ì´ë¥¼ ì°¸ì¡°í•œ ì»¬ëŸ¼ëª…ì„ ê°™ì´ ì¨ì£¼ê¸°.
 
---4. testemp Å×ÀÌºí¿¡ uk_enumber¸íÀ¸·Î unique Á¦¾àÁ¶°Ç Ãß°¡ÇÏ¶ó
---enumberµµ ¾ÆÁ÷ ¸¸µéÁö ¾Ê¾Ò±â ¶§¹®¿¡..
+--4. testemp í…Œì´ë¸”ì— uk_enumberëª…ìœ¼ë¡œ unique ì œì•½ì¡°ê±´ ì¶”ê°€í•˜ë¼
+--enumberë„ ì•„ì§ ë§Œë“¤ì§€ ì•Šì•˜ê¸° ë•Œë¬¸ì—..
 
 alter table testemp
 add enumber char(10) constraint uk_testemp_enumber unique;
---ÄÃ·³¸í°ú µ¥ÀÌÅÍÅ¸ÀÔÀº µû¶ó´Ù´Ô
---add enumber char(10) unique; --½Ã½ºÅÛÀÌ ¾Ë¾Æ¼­ Á¦¾àÁ¶°Ç ÀÌ¸§À» ºÙÀÌ°Ô µÊ.
+--ì»¬ëŸ¼ëª…ê³¼ ë°ì´í„°íƒ€ìž…ì€ ë”°ë¼ë‹¤ë‹˜
+--add enumber char(10) unique; --ì‹œìŠ¤í…œì´ ì•Œì•„ì„œ ì œì•½ì¡°ê±´ ì´ë¦„ì„ ë¶™ì´ê²Œ ë¨.
 
---5. testemp Å×ÀÌºíÀÇ ename¿¡ nn_ename¸íÀ¸·Î not null Á¦¾àÁ¶°Ç Ãß°¡ÇÏ¶ó
---not nullÀÌ Á¦¾àÁ¶°ÇÀÏ±î?
---¿À¶óÅ¬¿¡¼± Á¦¾àÁ¶°ÇÀ¸·Î º½. ´Ù¸¥ °÷¿¡¼± ¾Æ´Ò ¼öµµ ÀÖÀ½.
---µ¥ÀÌÅÍÁøÈï¿ø¿¡¼­ ½ÃÇèº¸´Â °Í, ±¹Á¦°øÀÎ.
+--5. testemp í…Œì´ë¸”ì˜ enameì— nn_enameëª…ìœ¼ë¡œ not null ì œì•½ì¡°ê±´ ì¶”ê°€í•˜ë¼
+--not nullì´ ì œì•½ì¡°ê±´ì¼ê¹Œ?
+--ì˜¤ë¼í´ì—ì„  ì œì•½ì¡°ê±´ìœ¼ë¡œ ë´„. ë‹¤ë¥¸ ê³³ì—ì„  ì•„ë‹ ìˆ˜ë„ ìžˆìŒ.
+--ë°ì´í„°ì§„í¥ì›ì—ì„œ ì‹œí—˜ë³´ëŠ” ê²ƒ, êµ­ì œê³µì¸.
 
 alter table testemp
 modify ename varchar2(10)
 constraint ck_testemp_ename not null;
 --constraint nn_ename not null;
---modify ename varchar2(10) not null -->>sys_...·Î ÀÚµ¿À¸·Î ºÙ¿©Áü.
---check constraint Áß ÇÏ³ª.
+--modify ename varchar2(10) not null -->>sys_...ë¡œ ìžë™ìœ¼ë¡œ ë¶™ì—¬ì§.
+--check constraint ì¤‘ í•˜ë‚˜.
 
---6. testdept Å×ÀÌºíÀÇ dcount¿¡ default¸¦ Ãß°¡ÇÏ¶ó
---´ë°³ default´Â Á¦¾àÁ¶°ÇÀÌ ¾Æ´Ï´Ù.
+--6. testdept í…Œì´ë¸”ì˜ dcountì— defaultë¥¼ ì¶”ê°€í•˜ë¼
+--ëŒ€ê°œ defaultëŠ” ì œì•½ì¡°ê±´ì´ ì•„ë‹ˆë‹¤.
 
 alter table testdept
 add dcount number(3) default 0;
---Á¦¾àÁ¶°ÇÀÌ ¾Æ´ÑÁö¶ó Á¦¾àÁ¶°Ç¸íÀ» ÁÙ ¼ö ¾øÀ½.
+--ì œì•½ì¡°ê±´ì´ ì•„ë‹Œì§€ë¼ ì œì•½ì¡°ê±´ëª…ì„ ì¤„ ìˆ˜ ì—†ìŒ.
 
---7. testemp Å×ÀÌºíÀÇ enumber Å©±â¸¦ +4 Áõ°¡½ÃÄÑ¶ó
-alter table testemp --¼öÁ¤?
+--7. testemp í…Œì´ë¸”ì˜ enumber í¬ê¸°ë¥¼ +4 ì¦ê°€ì‹œì¼œë¼
+alter table testemp --ìˆ˜ì •?
 modify enumber char(14);
 
---8. testemp Å×ÀÌºíÀÇ egender¿¡ ¿©·¯ °¡Áö Á¦¾àÁ¶°ÇÀ» Ãß°¡ÇÏ¶ó
+--8. testemp í…Œì´ë¸”ì˜ egenderì— ì—¬ëŸ¬ ê°€ì§€ ì œì•½ì¡°ê±´ì„ ì¶”ê°€í•˜ë¼
 alter table testemp
 add egender char(1) default 'm' 
 constraint nn_testemp not null
 constraint ck_testemp_egender check (egender in('m','f'));
---check (); --°ýÈ£ ¾È¿¡ ÀÖ´Â °Ô °ÅÁþÀÌ¸é ¿À·ù ºý..!
+--check (); --ê´„í˜¸ ì•ˆì— ìžˆëŠ” ê²Œ ê±°ì§“ì´ë©´ ì˜¤ë¥˜ ë¹¡..!
 
 alter table testemp
 drop constraint NN_TESTEMP;
 
 alter table testemp
 add constraint ck_testemp_egender2 check(egender is not null);  
---not nullµµ check constraint Á¾·ù Áß ÇÏ³ªÀÌ±â¿¡..
+--not nullë„ check constraint ì¢…ë¥˜ ì¤‘ í•˜ë‚˜ì´ê¸°ì—..
 desc user_tab_columns
---ÄÃ·³µéÀÇ ¼Ó¼ºµé±îÁöµµ È®ÀÎÇÏ´Â ¹æ¹ý.
+--ì»¬ëŸ¼ë“¤ì˜ ì†ì„±ë“¤ê¹Œì§€ë„ í™•ì¸í•˜ëŠ” ë°©ë²•.
 
-select table_name,column_name,data_default --data_default µ¥ÀÌÅÍ µðÆúÆ® °ª È®ÀÎ.
+select table_name,column_name,data_default --data_default ë°ì´í„° ë””í´íŠ¸ ê°’ í™•ì¸.
 from user_tab_columns;
 
 --******************
---0¹øºÎÅÍ 8¹ø±îÁö ½ÇÇà (1)
+--0ë²ˆë¶€í„° 8ë²ˆê¹Œì§€ ì‹¤í–‰ (1)
 --******************
 
 select table_name
@@ -118,18 +118,18 @@ exception
 end;
 /
 
-select * from testemp; --14¸íÀÏ °ÍÀÓ.
+select * from testemp; --14ëª…ì¼ ê²ƒìž„.
 select * from testdept;
 --delete from testemp where empno=9999;
---ÇÁ·Î½ÃÀú¸¦ ½ÇÇàÇßÀ» ¶§¿¡µµ ¾È¿¡ ÀÖ´ø Äõ¸®°¡ Æ®¸®°Å¿¡ ¿µÇâÀ» ¹Þ±âµµ ÇÔ.
+--í”„ë¡œì‹œì €ë¥¼ ì‹¤í–‰í–ˆì„ ë•Œì—ë„ ì•ˆì— ìžˆë˜ ì¿¼ë¦¬ê°€ íŠ¸ë¦¬ê±°ì— ì˜í–¥ì„ ë°›ê¸°ë„ í•¨.
 
---Æ®¸®°Å¿¡¼­´Â ³»°¡ º¯¼ö¸¦ Á÷Á¢ Á¶Á¾ÇÒ ¼ö ¾ø´Ù.
+--íŠ¸ë¦¬ê±°ì—ì„œëŠ” ë‚´ê°€ ë³€ìˆ˜ë¥¼ ì§ì ‘ ì¡°ì¢…í•  ìˆ˜ ì—†ë‹¤.
 --:new.deptno
---Æ®¸®°Å ³»¿¡¼­ commitµµ ¾ÈÇÑ´Ù.
---±×·¯´Ï Æ®¸®°Å ³¡³ª¸é ¹Ù·Î Ä¿¹Ô..!
+--íŠ¸ë¦¬ê±° ë‚´ì—ì„œ commitë„ ì•ˆí•œë‹¤.
+--ê·¸ëŸ¬ë‹ˆ íŠ¸ë¦¬ê±° ëë‚˜ë©´ ë°”ë¡œ ì»¤ë°‹..!
 
 
---Æ®¸®°Å È®ÀÎ ¹æ¹ý
+--íŠ¸ë¦¬ê±° í™•ì¸ ë°©ë²•
 desc user_object_type;
 desc user_triggers;
 select trigger_name from user_triggers;
@@ -167,11 +167,11 @@ desc user_source
 select line, text
 from user_source
 where name = 'T_UPDATE14';
---Æ®¸®°Å ³»¿ë È®ÀÎ.
+--íŠ¸ë¦¬ê±° ë‚´ìš© í™•ì¸.
 
---desc : describe >>¿¡µðÅÍ ¸í·É¾î
---ÇØ´çÇÏ´Â °÷¿¡ µé¾îÀÖ´Â ÄÃ·³¸í°ú µ¥ÀÌÅÍ Å¸ÀÔ¸¸ ¾Ë·ÁÁÜ 
---´Ü¼øÇÑ ±¸Á¶ÆÄ¾ÇÀ» À§ÇØ¼­ ¾´´Ù.
+--desc : describe >>ì—ë””í„° ëª…ë ¹ì–´
+--í•´ë‹¹í•˜ëŠ” ê³³ì— ë“¤ì–´ìžˆëŠ” ì»¬ëŸ¼ëª…ê³¼ ë°ì´í„° íƒ€ìž…ë§Œ ì•Œë ¤ì¤Œ 
+--ë‹¨ìˆœí•œ êµ¬ì¡°íŒŒì•…ì„ ìœ„í•´ì„œ ì“´ë‹¤.
 
-desc tabs --Ãà¾àÇü
+desc tabs --ì¶•ì•½í˜•
 desc user_tables
