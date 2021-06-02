@@ -1,3 +1,0 @@
-alter user hr IDENTIFIED by hr
-account unlock;
-
