@@ -1,0 +1,81 @@
+2105018
+상속..!
+
+다중 상속이 되기에 쓰고싶다고 생각하는 메소드들을 마음껏 가져다가 사용할 수 있다.
+
+업 캐스팅
+:파생 클래스 포인터가 기본 클래스 포인터에 치환(자식 > 부모)/ 자식을 부모화한다?
+
+다운 캐스팅
+:기본 클래스 포인터가 파생 클래스의 포인터에 치환(부모 > 자식) /부모가 자식이 되는?
+**이땐 강제 타입 변환 필요
+
+접근 지정자
+private		내 클래스에서만
+public 		모두
+protected		선언된 클래스, 파생(자식) 클래스에서만
+상속에서도 동일하게 적용..!
+
+생성자
+기본이 먼저 생성, 파생이 나중 생성
+
+소멸자
+파생 먼저, 기본 나중
+
+상속 지정!
+:public > 멤버 속성을 그대로 계승
+:private > 기본 클래스의 멤버들(public, protected)를 private으로 계승
+:protected > 
+
+*********
+#include <iostream>
+~~
+
+class Base{
+	int a;
+protected:
+	void setA(int a) {this->a = a;}
+public:
+	void showA(){cout<< a;}
+};
+
+class Derived : private Base{
+	int b;
+protected:
+	void setB(int b) {this -> b = b;}
+public:
+	void showB() {cout<<B;}
+};
+
+int main() {
+	Derived x;
+	x.a = 5;
+	x.setA(10);
+	x.showA();
+	x.b=10;
+	x.setB(10);
+	x.showB(); <<얘만 가능.
+
+return 0;
+
+: (protected) Base {~~~~
+}
+
+***********
+상속지정과 관련된 문제출제 가능
+
+class MP3
+
+class MusicPhone: public MP3, public..
+
+그런데 도중에 변수의 이름이 같아지는 경우가 생긴다면...?
+
+A
+B.A C.A
+
+D.B,C ???
+
+그래서.. 가상상속..!
+
+다중 상속으로 읺인해 기본 클래스 멤버의 중복 상속 해결..!
+파생 클래스의 선언문에서 기본 클래스 앞에 virtual로 선언..!

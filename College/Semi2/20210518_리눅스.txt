@@ -1,0 +1,156 @@
+210518
+crond 주기적으로 정해진 시간에 작업, crontab으로 예약
+atd 작업 스케줄을 예약해주는 데몬 프로그램, atd로 확인
+
+ps -ef | grep crond
+ps -ef | grep atd
+
+crond의 설정파일
+사용자 crond 설정 파일(/var/spool/cron/사용자명)
+
+crontab -l 
+    root에 속한 crontab 확인
+
+crond(cron demon:서버관련)
+반복적인 특정 작업의 자동실행을 위해 지원하는 명령어
+
+crond 데몬과 관련있는 파일들
+
+cron(서비스): crond
+cron 설정 파일; /etc/crontab
+cron 관련 디렉토리: /etc/cron.hourly, /etc/cron.daily, /etc/cron.weekly, /etc/cron.monthly ...
+
+cron.daily
+logrotate: 로그파일을 기록하는 것.
+
+cron.weekly
+없음
+
+cron.monthly
+없음
+
+cron.hourly
+0anacron
+
+/etc/crontab : cron을 하는 demon의 설정파일
+
+매주 토요일 밤 12시 50분?
+/etc/shadow, /etc/group
+
+ex1)
+매주 토요일 오전 9시에 kiwi의 홈디렉토리를 계정.tar.gz로 압축하라.
+0 9 * * 6 root tar cvfz kiwi.tar.gz /home/kiwi
+
+
+ex2)
+2개월 간격으로 1일, 새벽 1시에 test 계정의 디렉톹터리를 계정.tar.gz로 압축하라
+0 1 1 */2 * root tar cvfz test.tar.gz /home/test
+
+ex3)
+매월 15일 오전 3시에 /var/log/maillog에 있는 로그 파일의 내용을 삭제하라.
+0 3 15 * * root echo "">/var/log/maillog
+공백을 주는 방식으로 maillog의 내용을 지움
+
+0 3 15 * * root cat /dev/null > /var/log/maillog
+null 갑을 주어 maillog의 내용을 지움
+
+crontab -e -u 사용자명
+;사용자명에 해당하는 crontab 생성
+
+: root계정 접속 시 crontab -e 하면 루트만 뜸
+:crontab -l을 해도 root에 해당하는 것만 뜸.
+
+사용자계정으로 접속시엔 달라짐.
+crontab -e > 사용자계정의 crontab 수정
+crontab -l > 사용자계정에서 진행중인 cron목록 보여줌.
+
+ls /var/spool/cron
+crontab이 등록된 계정들 보여줌.
+
+/var/.* ->log 라는 뜻
+./spool/.*
+
+systemctl restart crond 하면 데몬 다시시작하여 설정된 것들을 실행시킴
+
+root 계정의 crontab 삭제
+crontab -r
+crontab -l (확인)
+
+root 권한으로 사용자 cron 설정 삭제
+crontab -l -u test02
+crontab -r -u test02
+
+사용자가 직접 삭제
+crontab -r
+crontab -l
+
+crond -주기적인 작업
+init 데몬: 부팅시 가장 먼저 뜨는 화면(CUI, GUI 결정)
+crond 데몬 실행
+
+/etc/crontab 파일 읽어들임
+
+/var/spoon/cron 디렉토리에 있는 파일을 읽어들임
+
+cron에 의해 수행되지 못한 작업(root에게 메일을 보냄.)
+anacron에 의해 수행 시도
+
+cron 로그파일에 실행기록
+/car/log/cron
+crond에 의해 수행된 수행내용 기록
+anacron에 의해 수행된 수행내용 기록
+ *atd에 의한 수행기록은 /var/log/messages에 기록
+그날 그날 일어난 일들에 대해 기록(messages)
+
+이유? 관리자가 일을 효율적으로 해내기 위해.
+
+systemctl restart atd (재시작 >> id가 바뀜)
+ps -ef | grep atd
+
+atd의 설정파일 
+/var/spool/at 에 존재
+
+at 데몬 띄우기 
+/systemctl restart atd
+
+at 시간 요일(hh:mm YYYY-MM-DD)
+at> 스케줄 명령
+at> ctrl +D 키를 눌러 스케줄 예약
+
+*작업예약
+at 11:00pm today
+at> shutdown -r now
+at> <EOT> (Ctrl+D)
+
+atq job목록 확인
+
+crond 매일,매월 ...
+at 내가 필요한 시간에 작업해야하는 것들을 작성.
+
+사용자 제한
+/etc/at.allow
+/etc/at.deny
+
+위의 파일을 작성할 때 한 줄에 계정 한 개씩 입력
+작성 후 갱신
+systemctl restart atd
+
+[root@192 backup]# su test02
+[test02@192 backup]$ at 1:00pm today
+You do not have permission to use at.
+
+거부할 사람이 많을 수록 at.allow가 더 편해짐.
+/etc/at.allow
+/etc/at.deny가 둘다 존재하게 되면 에러 발생..
+
+작업제거 atrm
+atq로 확인 후
+atrm으로 제거
+(작업이 완료된 친구는 atq에 남아있음.)
+
+at 13:00 today
+mkdir /root/again
+tar cvfz /root/again/dev.tar.gz /dev/*
+<EOT>
+
+
