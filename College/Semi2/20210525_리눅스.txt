@@ -1,0 +1,272 @@
+계정과 권한(1)
+권한 상승...> set useID
+
+su로 관리자로 바뀌지만.. << 인증을 받은 사람에 한해서 가능.
+일반 사용자를 관리자로 어떻게 바꿀 수 있을까..?
+
+직책과 직급에 따라 받는 권한이 다르다.
+
+시스템 해킹.
+부여받은 일반 사용자 권한 이상의 권한을 획득하는 절차.
+
+회사 밖 뿐 아니라
+회사 안에서도 부여된 권한 이상의 권한을 요구한다면 그것도 해킹.
+
+root id >> 0:0
+vi /etc/passwd
+사용자에 대한 계정과 비밀번호가 모두 있음..!
+
+'''
+SET/USE ID로 몇몇 명령어를 바꾸어놓는 경우가 있음.
+(그래서 언제나 해당 명령어의 개수를 파악하는 것이 중요)
+'''
+
+사용자 ID는 1000번대
+그룹 ID와 사용자 ID는 다를 수 있음. (/etc/group 에서 확인)
+
+-g를 주면 사용자 ID와 같음
+-G를 주면 다름.
+
+/etc/passwd
+root : x : 0 : 0 : root : /root : /bin/bash
+      패스워드가 암호화 > shadow에 저장
+사용자계정
+            userid
+	groupid
+	         사용자 이름
+	 	    사용자의 홈 디렉터리  
+			  사용자의 셀 지정(bash shell:리눅스, shell:유닉스)
+
+UID 부여시 /etc/login.defs에서 확인가능
+관리자는 UID 0번, 그 외 사용자는 보통 1000번 이상을 부여
+
+ls -al /etc
+기본 파일의 권한 값 644
+기본 디렉터리의 권한 값 755
+ touch 관리자 644(110 100 100) / 사용자 664(110 110 100)
+
+파일 종류에 대한 속성 문자
+d directory
+- 일반
+l symbolic link
+c 버퍼저장x 특수파일, charactor file
+b 버퍼링된 특수파일, block file
+s socket file
+p pipe file
+
+wishfree@localhost ~]$ touch a.txt
+[wishfree@localhost ~]$ mkdir a
+[wishfree@localhost ~]$ ls -l
+합계 0
+drwxrwxr-x. 2 wishfree wishfree 6  5월 25 09:37 a
+-rw-rw-r--. 1 wishfree wishfree 0  5월 25 09:37 a.txt
+
+umask 값에 의해 결정
+/etc/bashrc에서 설정
+
+cat -n << 번호가 붙음.
+.exrc 파일을 조작하면 줄번호가 뜨게 만들 수 있음.
+
+
+if [ $UID -gt 199 ] && [ "`/usr/bin/id -gn`" = "`/usr/bin/id -un`" ]; then
+    75	       umask 002
+    76	    else
+    77	       umask 022
+    78	    fi
+
+
+-gt 크다 >
+UID가 199보다 크고.. 
+user의 UID와 GID가 같으면.. umask: 002
+아니면 umask:022
+
+보안 강화가 목적이라면
+umask 002 --> umask 022로 바꾸어야
+
+default - umask = (file)644/ (directory)755
+
+root 계정에서 만든다면..?
+drwxr-xr-x. 2 root root   6  5월 25 09:47 a
+-rw-r--r--. 1 root root   0  5월 25 09:47 a.txt
+644 / 755
+
+(2)
+666
+027
+---
+640
+
+777
+027
+---
+750
+
+권한강화 other는 접근하지 못함.
+
+[root@localhost miku]# su - wishfree 
+[wishfree@localhost ~]$ id
+uid=1002(wishfree) gid=1002(wishfree) groups=1002(wishfree) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+
+uid=0(root) gid=0(root) groups=0(root) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+
+내 id를 알고 싶다면 id 치면 됨.
+
+vi /etc/bashrc
+맨 마지막 줄로 간다면 대문자 G
+해당하는 줄로 이동하고 싶다면 75 gg 
+(75번쨰 줄로 가겠다는 뜻.)
+
+[root@localhost wishfree]# ls -l /home/wishfree
+chown :wishfree :wishfree
+chown :wishfree (그룹명도 이와 같다면)
+
+group id를 바꾸는 법.
+chown :wishfree <파일명>
+소유자까지 바꿀 때
+chown :wishfree
+
+유닉스 기준으로는 :
+쓰다보니 불편해서 .으로도 가능.
+(하지만, 리눅스 시험 기준에서는 땡..
+리눅스의 탈을 쓴 유닉스 시험..!?)
+
+그룹만 변경할 땐 chgrp (change group)
+
+권한상승
+(chmod 정도로 바꾸는 거 정도만 했었던..)
+
+tar cvfz wishfree.tar.gz /a
+cvfz (예전엔 z가 뒤로가면 적용이 안되었다고..)
+CREATE V F ZIP
+
+일반 사용자가 자신보다 위의 권한을 가지려 하는 것..> 권한 상승
+RUID;Real UID RGID:Real GID
+<set USE ID를 통해서 관리자가 해야할 일을 하게 된다면?>
+EUID:Effective UID EGID: Effective GID
+
+작업이 끝나게 되면 다시 RUID,RGID로 돌아감.
+
+
+[root@localhost wishfree]# ls -l /etc/shadow
+----------. 1 root root 1390  5월 25 09:37 /etc/shadow
+[root@localhost wishfree]# su wishfree
+[wishfree@localhost ~]$ exit
+exit
+[root@localhost wishfree]# su - wishfree
+[wishfree@localhost ~]$ id
+uid=1002(wishfree) gid=1002(wishfree) groups=1002(wishfree) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+[wishfree@localhost ~]$ ls -l /etc/shadow
+----------. 1 root root 1390  5월 25 09:37 /etc/shadow
+[wishfree@localhost ~]$ 
+
+권한이 전혀 없음.
+관리자인 root도 읽는 권한이 전혀 없다.
+shadow파일의 권한은 0
+하지만 소유자가 root이므로 파일에 대한 권한 조정과 접근은 가능.
+
+EUID 권한을 잠시 부여한 것 뿐이지 실제로 바뀌는 것은 아님.
+
+su -
+바꾸고자하는 계정의 홈디렉토리로 옮겨짐
+su
+현 디렉터리에서 사용자만 바뀜.
+
+비밀번호를 바꿀 때에는 사용자가 관리자가 바꾸는 것 처럼 해야..
+실행할 수 있는 번호만 setUID로 변경.
+
+SetUID 4755(실행권한) rwsr-xr-x
+소유자권한 x 자리에 s를 바꾸어 사용.
+SetGID 2xxx
+
+RID > EID > RID
+<..그래서 해커들은 언제나 SetUID를 만들려함.
+
+그래서 SetUID의 개수를 언제나 확인하는 것이 중요.
+그것을 확인하는 명령어도 있다고 함.
+
+find 파일이 어디에 있는지 찾는 것.
+파일 소유자가 관리자면서, SetUID비트를 가진 파일을 검색.
+
+***
+find / -user root -perm 4755
+
+find -perm mode    >> 정확히 같은 권한 가진 파일
+find -perm -mode >> 부여한 권한을 모두 만족하는 파일(이상)
+find -perm /mode	>> 안씀
+find -perm +mode	>> 안씀
+
+1755 : 스티키 비트 관련
+2755 : 그룹에 관한 것
+
+(*)
+SetUID를 활용한 해킹 기법 익히기
+
+[root@localhost wishfree]# mkdir /test
+[root@localhost wishfree]# cd /test
+[root@localhost test]# pwd
+/test
+[root@localhost test]# cp /bin/bash /test/bash
+[root@localhost test]# ls
+bash
+[root@localhost test]# ls -l
+합계 1124
+-rwxr-xr-x. 1 root root 1150704  5월 25 10:51 bash
+[root@localhost test]# chmod 4755 bash
+[root@localhost test]# ls -l
+합계 1124
+-rwsr-xr-x. 1 root root 1150704  5월 25 10:51 bash
+rwsr-xr-x. 1 root root 1150704  5월 25 10:51 bash
+[root@localhost test]# chown wishfree.wishfree bash
+[root@localhost test]# ll
+합계 1124
+-rwxr-xr-x. 1 wishfree wishfree 1150704  5월 25 10:51 bash
+[root@localhost test]# ls -l
+합계 1124
+-rwxr-xr-x. 1 wishfree wishfree 1150704  5월 25 10:51 bash
+[root@localhost test]# chmod 4755 bash
+[root@localhost test]# ls -l
+합계 1124
+-rwsr-xr-x. 1 wishfree wishfree 1150704  5월 25 10:51 bash
+
+-rwsr-xr-x. 1 wishfree wishfree 1150704  5월 25 10:51 bash
+[root@localhost test]# su wishfree
+[wishfree@localhost test]$ id
+uid=1002(wishfree) gid=1002(wishfree) groups=1002(wishfree) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+[wishfree@localhost test]$ ./bash
+[wishfree@localhost test]$ 
+
+[root@localhost test]# chmod 4755 backdoor
+[root@localhost test]# su wishfree
+[wishfree@localhost test]$ id
+uid=1002(wishfree) gid=1002(wishfree) groups=1002(wishfree) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+[wishfree@localhost test]$ ./backdoor
+[root@localhost test]# id
+uid=0(root) gid=0(root) groups=0(root),1002(wishfree) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+
+wxr-xr-x. 1 root root 46128  7월 22  2020 /bin/more
+[root@localhost test]# chmod 4755 /bin/more
+[root@localhost test]# ls -l /bin/more
+-rwsr-xr-x. 1 root root 46128  7월 22  2020 /bin/more
+
+일반 사용자는 /etc/shadow 볼 수 없는데..
+변경한 more를 이용하면..?
+more /etc/shadow
+어떤 암호형식을 썼는지까지 다나옴..
+
+/bin/bash를 /bin/vi로 바꾸고 backdoor.c를 저장.
+vi로 들어가게됨
+근데 여기서 편집기와 콘솔을 왔다갔다 할 수 있다고..
+
+:!/bin/bash
+하는 순간 권한이 루트 권한으로 아예 변경됨..
+
+exit
+하면 vi 편집기로 넘어감.
+다시 wishfree로 넘어감.
+따라서 SetUID를 계속해서 확인..!
+
+4755 > 755로 바꾸면 일반파일로 변경됨.
+
+
+
+

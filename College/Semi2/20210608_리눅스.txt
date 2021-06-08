@@ -1,0 +1,202 @@
+Unit dependency and Orders
+예전과는 다르게 C 그룹으로 묶여서.. 같은 그룹으로 묶이어 실행
+
+Dependency
+어떤 유닛이 활성화되면 다른 유닛도 활성화되는 것..!
+
+Order
+특정 유닛이 활성화된 후에 다른 것도 활성화 되는 것..!
+
+부팅 ..> systemd ... default.target을 활성화 <얘와 의존성같는 모든 애들이 활성화
+
+requires: 앞선 유닛 실행 실패시 해당 유닛도 실행하지 말 것
+wants: 앞서 실행될 유닛의 구동 실패시 해당 유닛은 어떻게든 실행할 것.
+
+conflict:rescue.service 
+동시에 활성화하지 않을 유닛을 지정
+멀티유저 / 그래피컬 유닛을 사용할 수 없게 되는 경우를 대비..
+
+[root@192 miku]# systemctl get-default
+graphical.target
+[root@192 miku]# systemctl set-default multi-user.target
+Removed /etc/systemd/system/default.target.
+Created symlink /etc/systemd/system/default.target → /usr/lib/systemd/system/multi-user.target.
+[root@192 miku]# systemctl get-default
+multi-user.target
+
+부팅시 해당 설정이 적용
+multi-user target = 3 / graphical = 5
+
+
+drwxr-xr-x. 2 root root   31  5월 17 14:00 basic.target.wants
+drwxr-xr-x. 2 root root   31  5월 17 13:57 bluetooth.target.wants
+lrwxrwxrwx. 1 root root   41  5월 17 13:57 dbus-org.bluez.service -> /usr/lib/systemd/system/bluetooth.service
+lrwxrwxrwx. 1 root root   41  5월 17 14:00 dbus-org.fedoraproject.FirewallD1.service -> /usr/lib/systemd/system/firewalld.service
+lrwxrwxrwx. 1 root root   44  5월 17 13:59 dbus-org.freedesktop.Avahi.service -> /usr/lib/systemd/system/avahi-daemon.service
+lrwxrwxrwx. 1 root root   44  5월 17 13:58 dbus-org.freedesktop.ModemManager1.service -> /usr/lib/systemd/system/ModemManager.service
+lrwxrwxrwx. 1 root root   57  5월 17 13:57 dbus-org.freedesktop.nm-dispatcher.service -> /usr/lib/systemd/system/NetworkManager-dispatcher.service
+lrwxrwxrwx. 1 root root   41  5월 17 13:59 dbus-org.freedesktop.timedate1.service -> /usr/lib/systemd/system/timedatex.service
+lrwxrwxrwx. 1 root root   41  6월  8 09:18 default.target -> /usr/lib/systemd/system/multi-user.target
+drwxr-xr-x. 2 root root   45  5월 17 14:00 default.target.wants
+lrwxrwxrwx. 1 root root   35  5월 17 14:00 display-manager.service -> /usr/lib/systemd/system/gdm.service
+drwxr-xr-x. 2 root root   32  5월 17 13:57 getty.target.wants
+drwxr-xr-x. 2 root root   88  5월 17 14:09 graphical.target.wants
+drwxr-xr-x. 2 root root 4096  6월  1 09:20 multi-user.target.wants
+drwxr-xr-x. 2 root root   48  5월 17 13:57 network-online.target.wants
+drwxr-xr-x. 2 root root   33  5월 17 14:00 nfs-blkmap.service.requires
+drwxr-xr-x. 2 root root   33  5월 17 14:00 nfs-idmapd.service.requires
+drwxr-xr-x. 2 root root   33  5월 17 14:00 nfs-mountd.service.requires
+drwxr-xr-x. 2 root root   33  5월 17 14:00 nfs-server.service.requires
+drwxr-xr-x. 2 root root   26  5월 17 14:00 printer.target.wants
+drwxr-xr-x. 2 root root   52  5월 17 14:00 remote-fs.target.wants
+drwxr-xr-x. 2 root root   33  5월 17 14:00 rpc-gssd.service.requires
+drwxr-xr-x. 2 root root   33  5월 17 14:00 rpc-statd-notify.service.requires
+drwxr-xr-x. 2 root root   33  5월 17 14:00 rpc-statd.service.requires
+drwxr-xr-x. 2 root root 4096  5월 17 14:00 sockets.target.wants
+drwxr-xr-x. 2 root root  261  5월 17 14:00 sysinit.target.wants
+lrwxrwxrwx. 1 root root   39  5월 17 13:57 syslog.service -> /usr/lib/systemd/system/rsyslog.service
+lrwxrwxrwx. 1 root root    9  5월 12  2019 systemd-timedated.service -> /dev/null
+drwxr-xr-x. 2 root root   61  5월 17 14:00 timers.target.wants
+drwxr-xr-x. 2 root root   29  5월 17 13:59 vmtoolsd.service.requires
+
+로그관리
+systemd-journald를 통해 관리
+로그제어
+journalctl
+로그설정
+vi /etc/systemd/journald.conf
+SystemMaxUse = 500M
+MaxFileSec = 1month
+
+유닛명 = 서비스명
+
+로그관리[1]
+var/log/messages
+[root@192 miku]# journalctl --since '1 hour ago'
+
+[root@192 miku]# journalctl -u sshd
+-- Logs begin at Tue 2021-06-08 09:04:56 KST, end at Tue 2021-06-08 09:34:18 KST. --
+ 6월 08 09:07:04 localhost.localdomain systemd[1]: Starting OpenSSH server daemon...
+ 6월 08 09:07:05 localhost.localdomain sshd[1203]: Server listening on 0.0.0.0 port 22.
+ 6월 08 09:07:05 localhost.localdomain sshd[1203]: Server listening on :: port 22.
+ 6월 08 09:07:05 localhost.localdomain systemd[1]: Started OpenSSH server daemon.
+
+
+journalctl -u sshd
+
+jornalctl /sbin/crond
+데몬에서 크론여부 확인
+
+마지막 부팅 후 로그
+journalctl -b
+크론 형태 확인
+journalctl -f
+종료
+systemctl halt
+재시작
+systemctl reboot
+
+
+시험범위
+계정과 권한
+로그인
+
+관리자 userID > 0
+3번, 4번
+
+루트의 /etc/passwd
+
+6번
+파일의 속성 관련 옵션들 살펴보기
+
+9번 슬라이드
+리눅스 파일의 기본생성권한 : 666 , 디렉토리 : 777
+umaks >> 644, 755
+
+파일의 기본 생성권한 
+10번
+(소유권 변경 등은 알아보기)
+
+14번
+시스템해킹을 위해 권한 상승
+setUID
+
+RUID RGID
+EUID EGID
+
+setUID 사용시 EUID가 상승(관리자 권한 얻음)
+14번 내용에 대한 전체내용을 확인해보기
+(17번 슬라이드에 해당 내용이 잘 나와있음)
+
+18번 슬라이드
+find 명령 파일 소유자가 관리자이며, setUID 비트를 가진 파일 검색
+빨간색 박스 안에 들어있는 내용에 집중
+
+find -perm mode
+find -perm -mode
+find -perm /mode
+find -perm +mode
+
+컴퓨터 시스템 -리눅스 암호화 알고리즘- 살펴보기
+4번 슬라이드
+패스워드 암호화 방식 기억하기
+지금은 SHA512 위주로 쓰지만
+예전엔 다른 것도 썼었음.
+
+6번 슬라이드 SALT
+솔트부분 확인하기
+
+$id$salt$encoded_password
+솔트 개념도 같이 꼼꼼히 확인해보기
+
+컴퓨터시스템 -systemd- PPT
+2번~3번 개념들. 객관식 포인트!
+
+5번~7번
+cgroup!!! 서술문제
+
+cgroup이란?
+cgroup 사용방법..
+
+부팅 상태 분석
+systemd뒤에 붙는 옶옵션들 잘 알아 두기
+systemd-analyze blame
+systemd-analyze critical-chain
+systemd-analyze critical-chain rsyslog.service
+systemd-analyze plot > plot.html
+
+18번 슬라이드
+Unit Dependency and Orders
+
+default.target을 통한 runlevel 변경
+
+25번 슬라이드의 옵션 확인!!!!!!!
+해당 결과가 잘 되는지 확인하는 거 journalctl
+
+-p 속성 조회
+특정 이벤트, 특정 서비스 조회하는 것
+journalctl -u named ...
+etc,,,
+
+
+주관식
+runlevel을 변경할 때 사용하는 것.
+현재 설정된 runlevel이 무엇인지 확인하는 것.
+(명령어 알아두기...!!)!)!)!)
+
+service 구동할 때에 명령어
+systemctl start (서비스명)
+restart
+stop
+etc...
+
+dependency
+어느하나가 부팅하면 같이 부팅한다.
+order
+다른 것이 부팅해도 다른 것이 부팅하지는 않는다.
+
+서술형 문제는 키워드가 4개가 들어가야 맞는 것으로 인정할 예정이라고..
+주관식은 6개
+객관식 14개
+
+26점.. + 4점

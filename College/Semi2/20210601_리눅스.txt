@@ -1,0 +1,184 @@
+centos8
+컴퓨터 시스템 -리눅스 암호화 알고리즘
+
+패스워드 정책 확인
+root 확인 
+
+chage -l root
+
+패스워드 정책 확인
+vi /etc/login.defs
+
+암호화 알고리즘이 SHA512로 적용되있음을 알자.
+
+패스워드 암호화 방식 확인
+cat /etc/shadow | grep root
+$1: MD5
+$5: SHA256
+$6: SHA512
+
+#요즘은 SHA512로 이미 되어있기에 적용불가
+
+cat /etc/login.defs
+암호화 변경
+authconfig --passsalgo=sha512 --update
+cat /etc/login.defs
+
+>>Centos8
+authconfig 사용안함
+변경하더라도 적용안됨. sha512 기본
+
+$6 해쉬함수:SHA512
+$ ~ $(이전까지) 값 랜덤으로 솔트값 생성
+$6 + 솔트값 > 해쉬된 결과값
+
+(똑같은 비밀번호라 할지라도 솔트값이 다다르기에 함부로 들어가기가 힘듬.)
+
+**
+솔트:Salt
+다이제스트? 해시 함수라는 수학적인 연산을 통해 암호화된 메시지(=솔트)
+
+단방향 해시함수에서 다이제스트 생성 시 추가되는 바이트 단위의 임의 문자열
+
+솔트 적용방법
+
+암호+Salt값 >$6 알고리즘 + 해쉬 값..
+<개념을 알앋아두기>
+$id$salt$encoded_password
+MD5	1	8	22	3 	
+SHA-256	1	8	53	3
+SHA-512	1	16	83	3
+
+systemd, journald > 시스템데몬
+
+systemd 목적: 리눅스 통합관리 툴
+부팅, 서비스, 로그 관릳리 등..
+
+C로 구현 - 기존 리눅스는 shell-script 방식
+
+init 대체 >> systemd
+(rc3.d? >> 콘솔모드로 부팅)
+숫자 순서에 따라 해당 프로세스 시작/ 순차적으로 실행
+
+systemd
+병렬로 실행, 의존성 있는 서비스끼리 묶여 실행. 부팅속도 향상.
+
+inetd(xinetd)
+웹서버 등.. 리누구스에 관계없음.
+telnet ftp .. >> 리눅스와 관련
+
+모든 프로세스를 PID가 아닌 cgroup으로 트래킹.
+유저별/ 프로세서별 자원활용 등을 제한.
+
+cgroup (= Control GROUP)?
+단일 또는 작업 단위의 프로세스 그룹에 대한 자원할당을 제어하는 커널 모듈
+프로세스들을 그룹화하는 역할만 하며 내부적으로 자원을 제한하거나 할당하는 역할을 서브시스템에서 수행
+
+cgroup이란?
+사용가능한 서브 시스템.
+
+[root@192 miku]# ps -ef | grep cpu
+root           9       2  0 09:31 ?        00:00:00 [mm_percpu_wq]
+root          14       2  0 09:31 ?        00:00:00 [cpuhp/0]
+root          15       2  0 09:31 ?        00:00:00 [cpuhp/1]
+root          21       2  0 09:31 ?        00:00:00 [cpuhp/2]
+root          27       2  0 09:31 ?        00:00:00 [cpuhp/3]
+root        7392    6812  0 10:09 pts/0    00:00:00 grep --color=auto cpu
+
+           프로세스ID 부모프로세스ID
+>>cpu가 들어가는 것들은 부모프로세스가 모두 2번임을 알 수 있음
+>>2번 프로세스? kthreadd
+
+UID          PID    PPID  C STIME TTY          TIME CMD
+root           1       0  0 09:31 ?        00:00:03 /usr/lib/systemd/systemd --switched-root --system --de
+serialize 17
+root           2       0  0 09:31 ?        00:00:00 [kthreadd]
+root           3       2  0 09:31 ?        00:00:00 [rcu_gp]
+root           4       2  0 09:31 ?        00:00:00 [rcu_par_gp]
+root           6       2  0 09:31 ?        00:00:00 [kworker/0:0H]
+root           8       2  0 09:31 ?        00:00:00 [kworker/u256:0-events_unbound]
+root           9       2  0 09:31 ?        00:00:00 [mm_percpu_wq]
+root          10       2  0 09:31 ?        00:00:00 [ksoftirqd/0]
+
+~~~
+
+[root@192 miku]# ps -ef | grep cpuacct
+root        7478    6812  0 10:13 pts/0    00:00:00 grep --color=auto cpuacct
+PPID가 bash shell과 관계가 있음을 확인할 수 있음.
+
+:의존성 있는 것들을 묶어서 처리함을 알 수 있음.
+root        6812    6807  0 09:32 pts/0    00:00:00 bash
+
+kthread > cpu > cpuacct
+
+kthread:커널 쓰레드
+>대부분의 프로세스들은 kthread로 구현
+
+thread
+>프로세스 내에서 실제로 작업을 수행하는 주체
+>모든 프로세스에는 한 개 이상의 쓰레드가 존재
+
+systmed-cgls 	cgroups의 group tree를 출력(tree)
+systmed-cgtop	cgroup의 top(top)
+
+top > 현재 구동중인 프로세스, 자원사용률과 관련된 내용을 알려줌.
+.Service 붙은 것들이 다 데몬
+
+top PR:우선순위.
+top는 목록의 이름대신 ProcessID만을 알려줌.
+
+udev 대체
+udev:리눅스 커널에서 디바이스를 관리.
+systemctl 했을 때 나오는 리스트의 윗부분이 udev 관련 장치 목록이다.
+회사에 들어갔을 때에 어떤 리눅스 버전을 쓰고 있는지가 꽤 중요하다.
+/
+systemd-analyze blame
+부팅과정에서 각 유닛별 초기화하는데 걸린 시간
+
+systemd-analyze critical-chain
+시간을 많이 사용하는 유닛들을 트리 형태로 엮어서(chain) 볼 수 있다.
+
+systemd-analyze critical-chain rsyslog.service
+특정유닛에 대한 것을 보여줌.
+r : remote 
+네트워크에 대한 부분이 다 나오는 모습
+
+******
+systemd > pid 1번 사용
+
+default.target >> graphical target
+ciritical-chain을 이용하면 graphical로 봐서 이런 의존관계가 나오는 지를 알 수 있음.
+
+설정파일
+ls -l /etc/systemd 디렉토리에 위치
+.conf
+
+ls user : user에 대한 내용이 다 들어가 있음.
+**
+/etc/systemd		configure
+/etc/systemd/system	system admin custom file
+/lib/systemd		바이너리 실행파일 존재
+/lib/systemd/system/	service, target 위치
+
+systemctl list-unit-files	정의된 모든 유닛들과 그 상태 출력
+systemctl list-units	현재 동작중인 / 동작해야할 유닛, 그 상태 출력
+
+Unit 제어
+기본적인 unit 동작 방법
+systemctl enable/disable <unit>
+systemctl start/stop/restart <unit>
+systemctl status <unit>
+systemctl daemon-reload
+
+Unit Dependency and Orders
+rescure.target 비상시 뜨는 모습
+graphical.target >> 현재 사용 중
+multi-user.target >>runlevel-3
+
+디폴트 타겟 바꾸기 = runlevel 변경
+
+끝에 l(권한 부분, 영어 엘)이 붙어있다면 심볼릭 링크임.
+lrwxrwxrwx. 1 root root   40  5월 17 14:04 default.target -> /usr/lib/systemd/system/graphical.target
+
+LVM quota + 주기적인 작업***** 수시평가..! <5강이랑 6강>
+학점이 절대평가가 될 수 있을지도 모름.
