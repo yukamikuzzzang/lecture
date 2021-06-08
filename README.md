@@ -4,8 +4,6 @@
 
 College - Learn something in hoseo college
 Egoing - Learn something in DailyCoding
-
----
 Diary - *어제와 비교할 때에 더 나은 내가 되기 위해 기록하는 사람.*
 
 ***
