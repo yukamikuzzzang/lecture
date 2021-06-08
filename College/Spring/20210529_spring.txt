@@ -1,0 +1,49 @@
+에플리케이션을 만들 때에 생각해야할 점.
+내가 만드는 어플을 사용하는 사람들은 나의 프로그램을 망가뜨리려는 사람들이다.
+
+유효성 검사
+validation
+Not Null
+Length
+Min, Max 등등
+
+Java Bean validation
+2009년 부터 데이터 유효성 검사 프레임워크 제공
+자바 표준 규격(Java Specification Request)으로 정의됨.
+JSR은 규격만 제시. 이를 구현하는 건 별도의 벤더들이 수행.
+
+가장 많이 사용되고 공인된 구현체.. 
+Hiberate Validator
+JSR like interface
+
+레거시 유효성 검사 방법
+각 계층별 유효성 검사 구현하면 코드 중복..
+
+Bean Validation 유효성 검사
+각 레이어를 움직이는 도메인 객체에 검증
+
+제약조건
+JSR에서 4가지 유형을 제공
+필드제약, 속성제약, 컨테이너 요소 제약, 클래스 제약
+
+기본메시지를 넣고 싶지 않다면..
+@Notblank 부분에 (~~~) 내용을 써주면 된다.
+
+@Notblank(message = "아이디는 공백일 수 없습니다.")
+
+Java Bean..
+@Valid만 추가해줘도..
+
+@Service에 경우
+@validate를 추가해줘야..
+검증에 대한 부분은 Controller에서 끝내는 것이 좋음.
+
+
+로그인할 때 ID와 PW가 비어있으면 안된다..!
+
+
+@Valid LoginDTO ~
+BindingResult
+th:errorclass! 에러가 발생할 때에 나오는 css
+th:if
+조건식을 만들려면 해당 태그를 그려라..!
