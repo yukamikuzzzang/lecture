@@ -1,0 +1,447 @@
+*무결성의 customizing
+  client  <---------> dbms <---------> server
+                     6.DCL문 1.DDL문:선언적인방법
+                                  (table, view...)
+2.DML문:transaction     3.SP(Stored Procedure)
++프로그래밍방법          :프로그래밍방법
+                                 :성능+,자동x
+                                 4.trigger
+                                 :프로그래밍방법
+                                 :성능-,자동o
+                                 5.index
+                                 :(검색성능+,갱신성능-)
+
+*pl/sql
+
+0.화면 출력하기 위해서
+>show serveroutput
+>set serveroutput on
+1. 1부터 10까지 자연수 합계를 구하라.
+declare
+    v_num int;
+    v_sum int:=0;
+begin
+    v_num:=1;
+    while v_num <= 10
+        loop
+            v_sum:=v_sum+v_num;
+            v_num:=v_num+1;
+        end loop;
+    dbms_output.put_line(v_sum);
+exception
+    when others then
+        dbms_output.put_line(sqlcode||sqlerrm);
+end;
+/
+
+declare
+    v_num int;
+    v_sum int:=0;
+begin
+    v_num:=1;
+    loop
+        v_sum:=v_sum+v_num;
+        if v_num >= 10 then
+            exit;
+        else
+            v_num:=v_num+1;
+        end if;    
+    end loop;
+    dbms_output.put_line(v_sum);
+exception
+    when others then
+        dbms_output.put_line(sqlcode||sqlerrm);
+end;
+/
+
+2. 1~20까지 자연수 가운데 3의 배수만 힙계를
+구하고 출력을 'total: '로 합계를,
+'last number: '로 마지막 숫자를 출력하라.
+다양한 exception처리하기
+declare
+    v_num int;
+    v_sum int:=0;
+begin
+    v_num:=1;
+    loop
+        if mod(v_num,3)=0 then
+           v_sum:=v_sum+v_num;
+        end if;   
+        if v_num >= 20 then
+           v_sum:=v_sum/0;  -- 에러유발
+           exit;
+        else
+            v_num:=v_num+1;
+        end if;    
+    end loop;
+    dbms_output.put_line
+    ('total : '||v_sum||' last number : '||v_num);
+exception
+    when zero_divide then
+        dbms_output.put_line
+        ('0 divide err!!! Try again!');
+    when others then
+        dbms_output.put_line
+      ('sqlcode : '||sqlcode||' sqlerrm : '||sqlerrm);
+end;
+/
+3. deptno로 dname을 출력하는 사용자정의
+함수 작성하기(get_dept_name)
+>user_objects, user_source로 확인하기
+>show err로 에러 확인
+:함수 호출
+1)select문에서
+  >select empno,ename,deptno,
+           get_dept_name(deptno)
+    from emp;
+2)다른 모듈에서
+  >declare
+       v_dname varchar2(14);
+    begin
+       v_dname:=get_dept_name(30);
+       dbms_output.put_line(v_dname);
+    end;
+    /
+3)sql*plus 명령
+  >var x_dname varchar2(14)
+  >exec :x_dname:=get_dept_name(10);
+  >print x_dname
+4.emp테이블에서 ename으로 sal을
+  출력하는 function명  f_sal을 작성하고 
+  호출하라.(단, ename은 아는데까지만 
+  입력하여 찾는 패턴연산자 이용)
+>create or replace function f_sal(v_ename                                     emp.ename%type)
+return emp.sal%type
+is
+    v_sal emp.sal%type;
+begin
+    select sal
+    into v_sal
+    from emp
+    where ename like '%'||v_ename||'%';
+    return v_sal;
+exception
+    when others then
+        dbms_output.put_line(sqlcode||sqlerrm);
+        return 0;
+end;
+/
+4-1.4번 문제를 job이 'MANAGER'이면
+  5%인상한 sal을, 'SALESMAN'이면 
+  10%인상한 sal을, 나머지는 그대로sal이
+  나오도록 f_sal2를 작성하고 출력하라.
+  (단, TOO_MANY_ROWS라는 미리정의된
+   예외처리를 추가하여 'Try again!'을 출력!)
+if ~ then
+elsif ~ then
+else
+end if;
+
+create or replace function f_sal2(v_ename                                     emp.ename%type)
+return emp.sal%type
+is
+    v_sal emp.sal%type;
+    v_job emp.job%type;
+begin
+    select sal,job
+    into v_sal,v_job
+    from emp
+    where ename like '%'||v_ename||'%';
+    if v_job='MANAGER' then
+        v_sal:=round(v_sal+v_sal*0.05);
+    elsif v_job='SALESMAN'then
+        v_sal:=round(v_sal+v_sal*0.1);
+    end if;
+    return v_sal;
+exception
+    when TOO_MANY_ROWS then
+        dbms_output.put_line('Try again!');
+        return 0;
+    when others then
+        dbms_output.put_line(sqlcode||sqlerrm);
+        return 0;
+end;
+/
+5. salgrade테이블에서 grade를 입력하면 
+해당 grade의 중간값 sal이 리턴되도록 f_midsal함수를 작성하고 호출하라!
+(단, 중간값 sal은 소수첫째자리에서 반올림)
+
+5-1.5번 문제를 해당 grade의 중간값 sal을
+출력하는 프로시저 p_midsal로 작성하라
+:프로시저 호출
+1)select문에서 호출 x
+2)다른 모듈에서
+  >begin
+       p_midsal(3);
+    end;
+    /
+3)sql*plus 명령
+  >exec p_midsal(2);
+
+-CTAS기법으로 testemp테이블을 만들고
+ 컬럼 두개를 추가하시오.
+( grade number(), sumsal number(10) )
+
+>drop table testemp;
+>create table testemp
+as select empno,ename,sal,deptno from emp;
+select * from testemp;
+>alter table testemp
+add grade number(1);
+>alter table testemp
+add sumsal number(10);
+6.procedure p_sum01이름으로 부서번호
+하나당 급여합계(sumsal)를 update하라.
+(단, 부서번호가 10이면 sumsal을 0으로 갱신하고 sumsal이 10000이상이면 '10000 over!'라는 메세지를 출력하라)
+if then
+elsif then
+else
+end if;
+7.procedure p_insert01이름으로 testemp테이블에 insert하는 프로시저를 만들어라.
+7-1.procedure p_insert02이름으로 testemp테이블에 insert하는 프로시저를 만들어라.
+(단, 부서번호가 10이면 sumsal을 0으로 갱신하고 sumsal이 10000이상이면 '10000 over!'라는
+메세지를 출력하라)
+8.procedure p_delete01이름으로 testemp테이블에 delete하는 프로시저를 만들어라.
+(단, 부서번호가 10이면 sumsal을 0으로 갱신하고 sumsal이10000이상이면 사용자정의 exception인 invalid_sumsal을일으키고 '10000 over!'라는 에러메세지를 출력하라)
+
+9.procedure p_grade01이름으로 사번별 사원의 sal로 salgrade테이블에서 해당하는 grade를 찾아서 testemp의 grade에 update하라.
+
+9-1.procedure p_insert05이름으로 testemp테이블에 grade와 sumsal컬럼의 무결성이 유지되도록 insert하는 프로시저를 만들어라.
+(sal과 grade값이 그 범위에 맞지 않으면
+ 'Try again! grade err!'를 에러메세지로 출력하는
+사용자정의 exception명 invalid_grade를 사용)
+
+-예외처리(exception)
+:PL/SQL의 오류를 의미.
+when others문으로 트랩되는 실제 오류는 
+sqlcode, sqlerrm로 확인.
+1)미리 정의된 오라클서버오류
+:선언 x, 발생시에 자동 트랩
+2)미리 정의되지 않은 오라클서버오류
+:선언 o, 발생시에 자동 트랩
+3)사용자정의오류
+:선언 o, 실행부에서 raise문으로 발생시킴.
+ 순서는 1.선언(선언부)
+           2.raise(실행부)
+           3.메세지출력(예외처리부)
+
+-커서(cursor)
+:Private SQL의 작업영역
+1)암시적인 커서
+:모든 DML과 PL/SQL SELECT문에 대해 선언된다.
+속성은 sql%rowcount, sql%found,sql%notfound,
+sql%open을 사용.
+2)명시적인 커서
+:프로그래머에 의해 선언되어 아름이 있는 커서
+속성은 커서명에 %rowcount,%found,%notfound,
+%open을 붙여 사용.
+ 순서는 1.선언(선언부)
+           2.OPEN(실행부)
+           3.FETCH(실행부)
+           4.CLOSE(실행부)
+
+-트리거(trigger)
+:insert,update,delete가 테이블에 수행될때
+묵시적으로 수행되는 프로시저.
+
+10.procedure p_sum02명으로 부서별 급여합계
+(sumsal)를 헌번에 갱신하라.
+(단,부서별 급여합계(sumsal)가 10이하이면 사용자정의exception invaid_sumsal을 일으키고 deptno,sumsal을 출력하고 작업취소하라)
+
+*테이블 스페이스
+-시스템 tablespace : system,sysaux
+-비시스템 tablespace : 일반-users,example,
+                                      사용자정의 tablespace
+                               임시-temp
+                               언두-undotbs1
+
+*시스템뷰(데이터 딕셔너리+동적 성능 뷰)
+: dba_tablespaces,dba_data_files,dba_temp_files,
+dba_users,database_properties,
+v$tablespace,v$datafile,v$tempfile
+>select tablespace_name,status from dba_tablespaces;
+>select file_name,tablespace_name from dba_data_files
+  union
+  select file_name,tablespace_name from dba_temp_files;
+
+*저장 단위
+                  논리                     물리
+                
+             tablespace      datafile01,datafile02...
+                    |                          |
+                 object                segment               
+        (table,trigger,procedure..)    |
+                                          extent
+                                              |
+                                           block
+1.사용자테이블스페이스 생성
+  1)droptbs1(droptbs101.dbf)
+  2)droptbs2_including(droptbs2_including01.dbf)
+  3)droptbs3_datafile(droptbs3_datafile01.dbf)
+  4)droptbs4_cascade(droptbs4_cascade01.dbf)
+:초기사이즈 5m, 자동확장, 1m씩 증가, 최대 10m
+>create tablespace droptbs1
+datafile 'c:\oraclexe\testa\droptbs101.dbf' 
+size 5m autoextend on next 1m maxsize 10m;
+
+2.사용자테이블스페이스 사이즈 추가
+:droptbs102.dbf을 추가
+(초기사이즈 5m, 자동확장, 1m씩 증가, 최대 10m)
+>alter tablespace droptbs1
+add datafile 'c:\oraclexe\testa\droptbs102.dbf' size 5m autoextend on next 1m maxsize 10m;
+
+3.사용자테이블스페이스 이동(위치,이름변경)
+  1)alter tablespace tbs명 offline;
+  2)물리적으로 원하는 위치나 이름으로 복사!
+  3)alter tablespace tbs명 rename
+    datafile '기존dbf명' to '신규dbf명';
+  4)alter tablespace tbs명 online;
+  5)물리적으로 기존데이터파일은 삭제!
+>alter tablespace droptbs1 offline;
+>alter tablespace droptbs1 rename
+  datafile 'c:\oraclexe\testa\droptbs1.dbf' 
+  to 'c:\oraclexe\testa\droptbs101.dbf';
+>alter tablespace droptbs1 online;
+문제] 사용자테이블스페이스 droptbs1의
+데이터파일 droptbs103.dbf를 
+원래 이름 droptbs102.dbf로 변경하시오.
+
+4.사용자테이블스페이스 삭제
+  1)drop tablespace droptbs1; (droptbs101.dbf, droptbs102.dbf) :
+     해당 테이블스페이스에 contents가 있으면 drop되지 않고
+     빈테이블스페이스 drop시만 삭제되나 물리적으로 dbf파일은 삭제되지 않음.
+  2)drop tablespace droptbs2_including including contents; (droptbs2_including01.dbf) :
+     해당 테이블스페이스에 있는 모든 contents는 삭제되나
+     물리적으로 dbf파일은 삭제되지 않음.
+  3)drop tablespace droptbs3_datafile including contents and datafiles; (droptbs3_datafile01.dbf) :
+     물리적으로 dbf파일은 삭제된다.
+  4)drop tablespace droptbs4_cascade including contents and datafiles cascade constraints; (droptbs4_cascade01.dbf) :
+     다른 테이블스페이스의 테이블이 해당 테이블스페이스를 참조하면
+     다른 테이블스페이스의 테이블은 그대로 존재하나 제약조건은 없어지고 실행은 성공함.
+5.임시테이블스페이스 생성후 디폴트 임시테이블스페이스로 변경
+  1)create temporary tablespace 새로운임시테이블스페이스명 temfile '~' size 10m; 
+  2)alter database default temporary tablespace 새로운임시테이블스페이스명;
+6.언두테이블스페이스 생성후 디폴트 언두테이블스페이스로 변경
+  1)create undo tablespace 새로운언두테이블스페이스명 datafile '~' size 10m; 
+  2)alter system set undo_tablespace= 새로운언두테이블스페이스명;
+
+*사용자 관리
+1.테이블스페이스 생성
+2.사용자 생성
+3.권한 부여
+  1)사용자에게 시스템 권한 부여
+    : grant 시스템권한 to 사용자명 [with admin option];
+  2)사용자에게 오브젝트 권한 부여
+    : grant 오브젝트권한 to 사용자명 [with grant option];
+  단, revoke ~ from 사용자명; 시스템권한은 해당 사용자만 revoke,
+                                         오브젝트권한은 이양 받은 모든 사용자에게서 revoke!
+4.롤(role)을 이용한 권한 부여 
+  1)롤 생성
+  2)롤에게 시스템 권한 부여
+  3)롤에게 오브젝트 권한 부여
+  4)사용자에게 롤 부여
+     단, 롤을 받은 사용자가 롤 set을 해야 적용된다.
+     >set role 롤명;
+  cf.시스템롤 : connect, resource (unlimited tablespace권한이 자동적으로 주어짐)
+5.동의어(synonym) 생성
+6.시퀀스(sequence) 생성
+7.테이블스페이스 없애기
+8.사용자 없애기
+9.롤 없애기
+10.public 시노님 없애기
+
+*시스템뷰(데이터 딕셔너리 뷰)
+나에게 부여된 시스템 권한 : user_sys_privs, role_sys_privs, user_role_privs
+나에게 부여된 오브젝트 권한 : user_tab_privs, role_tab_privs, user_role_privs
+>select privilege from role_sys_privs 
+  union
+  select privilege from user_sys_privs;
+>select owner,table_name,privilege from role_tab_privs 
+  union
+  select owner,table_name,privilege from user_tab_privs;
+
+*작업 내용
+   sys                                                               insauser01                insauser02                 insauser03
+---------------------------------------------------------------------------------------------------------------------------------
+1. create tablespace insatbs
+datafile 'c:\oraclexe\testa\insatbs01.dbf' 
+size 1m autoextend on;
+2.create user insauser&no identified by oracle
+default tablespace insatbs
+quota 0m on system;
+3.grant create session, create table to insauser01
+  with admin option; (다른 사용자에게 이양 가능)
+  grant unlimited tablespace to insauser01;
+4.grant connect, resource to insauser02; 
+                                                            5.grant create session, 
+                                                              create table to insauser03;
+6.alter user insauser03
+  quota unlimited on insatbs;
+                                                            7.create table test01(a number);         "                        "
+                                                             (default tablespace인 insatbs에 생성)  "                       "
+                                                            8.create table test02(aa number)         "                       " 
+                                                              tablespace system;                        
+                                                             (system tablespace에 생성 o)           생성 o             생성 x 
+                                                            9.drop table test02;                          "     
+                                                           10.grant select on test01
+                                                               to insauser02
+                                                               with grant option;
+                                                             (다른 사용자에게 이양 가능)
+                                                                                                      11.select * from               "
+                                                                                                          insauser01.test01;
+                                                                                                      12.grant select on 
+                                                                                                          insauser01.test01
+                                                                                                          to insauser03;
+                                                          13.revoke select on test01
+                                                              from insauser02;
+14.revoke create table from insauser01;
+15.create role role_mgr;
+16.grant create role, create synonym, 
+   create sequence, create table to role_mgr;
+17.grant role_mgr to insauser01;
+18.grant role_mgr to insauser02; 
+                                                      19.set role role_mgr;
+                                                      20.create role role_clerk;
+                                                      21.grant select,update on test01
+                                                          to role_clerk;
+                                                      22.grant role_clerk to insauser02;
+                                                                                                   23.set role role_mgr;
+                                                                                                   24.set role role_clerk;
+                                                                                                   25.create synonym test01
+                                                                                                       for insauser01.test01;
+							        26. select * from test01;
+                                                         
+27. grant creae public synonym to role_mgr;
+				  28. set role role_mgr;                                          
+                                                      29.create sequence testno
+                                                          increment by 1 start with 1
+                                                          maxvalue 100 nocache nocycle; 
+                                                      30.grant insert on test01 to role_clerk;
+                                                          grant select on testno to role_clerk;
+                                                                                                  31.create synonym testno
+                                                                                                      for insauser01.testno;
+                                                                                                  32.insert into test01
+                                                                                                      values(testno.nextval);
+                                                                                                  33.select testno.currval from dual;
+34.drop tablespace insatbs 
+    including contents and datafiles cascade constraints;
+35.drop user insauser&no cascade;
+36.drop role role_mgr;
+    drop role role_clerk;
+37.drop public synonym test99;
+
+
+
+
+
+
+
+
+
+
+객관식 18
+주관식? 12
+
+번호랑은 관계없음
+
+요거 주고 구멍 뜷을 거임
