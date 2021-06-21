@@ -1,0 +1,18 @@
+key : 377, value : OrderMenu(menu=Menu(no=377, shopNo=36, menuName=누룽지통닭, foodPhoto=null, cost=15000), count=100)
+
+
+
+목적: dto.getCount()의 누적..!
+
+객체가 없음.
+일단 객체를 만들어야함
+menuMap 생성
+
+위와 같이 메뉴맵이 생성
+
+1. 중복된 객체를 생성하려한다.
+	-1. 그게 이전애랑 같은친구인지를 알아야한다.
+		session.getAtribute("carts") vs orderMenu
+		하지만.. session 값이 menuMap에 있다..?!
+
+		menuMap
