@@ -1,0 +1,149 @@
+자바와 암호화
+라이브러리를 통해 암호화하는 방법을 ara보자
+
+
+	   나무꾼(탈취)
+견우<메시지> >>>>>>>>>>> 직녀<메세지>
+
+                                 나무꾼(탈취) : ???
+암호화 - (암호화된 메세지) >>>>>>>>>>>>>>>> (암호화된 메세지) - 복호화
+
+*메세지 인증코드, Message Authentication Code
+
+나무꾼이 중간에 메시지를 훼손하더라도 인증코드를 통해 알 수 있다.
+
+견우가 인증코드를 만들어서 메시지와 인증코드를 같이 보냄.
+나무꾼이 인증코드든 메시지든 훼손하게 되면 내용이 달라지게 된다.
+직녀는 메세지가 훼손되었다는 것을 알 수 있음.
+
+나무꾼이 견우의 인증키를 알고 있다면 직녀는 메세지의 훼손여부를 알 수 없음.
+
+그렇기에..
+견우와 직녀의 인증키는 키값이 되었든 특정 값이 되었든 본인들만이 
+아는 어떤 값을 붙여 메세지를 주고받음.
+
+인증:견우가 보낸 것이 맞는지를 확인. [메세지 암호화 != 인증]
+커코프 원칙: 암호 시스템의 안전성은 암호화 알고리즘이 아니라 '암호키의 비밀'에만 의존해야 함.
+
+******************
+*해시 함수,hash function
+임의의 크기를 가진 데이터 ...> 고정된 크기의 결과값을 출력
+이 결과값 = 메시지 다이제스트;Message Digest
+
+단방향성을 가짐 > 결과값 계산은 쉬우나 역산은 어려움.
+충돌성을 가짐   > 입력이 달라도 결과값이 같을 수 있음.
+
+*암호화 해시함수, MD5/SHA-256 etc..
+조건
+[]: 알고 있는 것
+1. 역상 저항성
+A → [FN(Message Digest)] 
+FN → ?
+Output으로 Input을 추측할 수 없다.
+
+2. 제2역상 저항성
+입력값이 주어지고, 해시값 알고 있지만
+다른 입력값을 찾기 어렵다는 이야기
+
+[A → FN]
+?  → FN
+
+3. 충돌 저항성
+같은 해시 값을 생성하는 두 개의 입력값을 찾는 것이 계산상 어려움
+?'  → FN
+?   → FN
+
+수학자들은 이미 이 성능을 수학적으로 따져놨다.
+
+*********
+*해시함수의 용도
+1. 체크섬(통신에서 순환 정보 검사를 할 때 사용하는 것)
+2. 패스워드 저장: 역함수가 없기 때문에
+3. 난수생성: random vs 난수(어려울 난)
+4. 메시지 다이제스트(해쉬 함수를 돌릴 때 나오는 값)
+
+*메시지 인증코드
+해쉬 알고리즘 > MD
+MAC 알고리즘 > MAC ... 메세지에 키값
+
+*JCA, JCE
+자바에 내장되어있는 암호화구조
+Java Cryptography Architecture
+Java Cryptography Extension
+
+기본적인 것들은 쓰되 필요한 것들은 확장팩을 쓰세요..
+                                    
+JCA Java sescurity
+java1.4이전엔 JCE를 별도 설치, 이후 JDK에 포함
+
+*JCA 설계원칙
+1. 구현독립성
+알고리즘을 구현한 이가 누군지 알 필요업이 API를 호출해서 써야
+
+2. 구현호환성
+app은 특정 provider에 종속되지 않고 provider는 특정 app에 종속되지 않아야
+
+3. 알고리즘 확장성
+제공되지 않는 알고리즘은 사용자 지정 프로바이더를 생성하여 사용할 수 있도록 지원해야함.
+
+*JCA와 JCE 구조
+-----------------------
+Java Application
+JCA/JCE API
+
+JCA         |           JCE
+
+SPI(Service Provider Interface
+provider
+SunJCE, CSP#1, CSP#2, CSP#3
+----------------------
+
+MessageDigest md = MessageDigets.getInstance("MD5")
+MessageDigest md = MessageDigets.getInstance("MD5", "ProviderC")
+
+default인 경우 1순위 Sun사 2,3, .. 
+어떠한 MD5든 똑같음. 달라질 경우 원칙이 위배되기 때문
+
+(2)
+ java.security file
+
+<JAVA_HOME>/jre/lib/security/java.security
+<JRE_HOME>/lib/security/java.security
+
+*프로바이더 등록
+<JAVA_HOME>/jre/lib/ext
+//<JRE_HOME>/lib/ext
+
+1. BouncyCastleCrypto 프로바이더 beprov-jdk15on-155.jar를 아래의 위치를 복사
+
+(JDK>lib>,,,>etc>)
+(JRE>...)
+
+java.security 파일 변경
+security.provider.11=org.bouncycastle.jce.provider.BouncyCastleProvider
+
+security.provider.N=org.bouncycastle.jce.provider.BouncyCastleBouncer
+
+
+해시함수 관련 class들
+MessageDigest사용
+
+static type
+getInstance() << 갖고 온다.
+이런 형태는 대부분 static 형
+static 클래스 =  이름으로 접근.
+
+public static MessageDigest.getInstance(String algorithm)
+
+객체를 얻음.(sha256을 사용할(ex))
+
+...
+해시 값을 생성
+public void update(byte [] input)	
+생성할 데이터 입력
+public byte [] digest()
+데이터 입력 후 해시값 생성
+public byte [] digest(byte [] input)
+
+
+
