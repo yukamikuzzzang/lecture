@@ -1,0 +1,93 @@
+Virtual Machine 땜에 느려지는 속도
+ios vs android
+언어 속도에 대해 관심을 가질 필요가 있음.
+
+기본함수들과 파라미터들에 대해 알아보자.
+Windows App:Win UI를 지닌 친구
+
+윈도우 App, UI를 지닌 친구
+Static Library? < 프로젝트가 커지면 메인이 바뀌어야할 수 있음
+exe 안에 배포파일이 포함되어 있는 친구 DLL, 속도가 빠르고, 배포가 쉬움.
+게임관련 데이터들 .. DLL
+
+동적 라이브러리
+Static, exe에 포함
+DLL, exe에 포함되지 않음 : 배포시엔 합쳐서 Setup으로 배포.
+
+Setup.exe
+
+윈도우와 관련된 함수가 있으면 앞에 msdn을 입력(했었음) <마소사이트 기준>
+
+개발할 때 함수에 대한 설명을 해놓는다.
+언어나 운영체제별로 설명하는 방식이 다름.
+<같은 말이라 할지라도>
+처음엔 어렵겠지만 익숙해지면 찾았을 때 금방 해석이 되요.
+
+WORD: 2BYTE?
+LPWSADATA: 구조체를 의미하는 포인터
+LP:Long Pointer
+
+https://docs.microsoft.com/en-us/windows/win32/api/winsock/nf-winsock-wsastartup
+
+위의 문서 중
+...
+Windows Sockets version 2.2 is supported on Windows Server 2008, Windows Vista, 
+Windows Server 2003, Windows XP, Windows 2000, Windows NT 4.0 with Service Pack 4 (SP4) and later, 
+Windows Me, Windows 98, and Windows 95 OSR2. 
+...
+
+windef.h은 이미 winsock2에 포함되어 있을 것.
+문서에 있는 또 다른 if문은 winsock이 잘 있는지 알려주는 기능.
+WSACleanup은 쌓여있는 DLL을 제거해주는 친구.
+
+링커: -lws2_32 / -lwsock
+
+https://docs.microsoft.com/en-us/windows/win32/api/winsock2/nf-winsock2-socket
+socket 함수
+windows에선 socket descriptor > handle
+return value에서 INVALID_VALUE가 나왔을 때 사용하는 에러 사용하는 법 확인.
+
+bind socket, sockaddr, addr의 길이
+const 주소
+주소는 변하지 않는 값?이라는 뜻.
+
+struct sockaddr{
+
+}
+
+struct sockaddr_in{
+
+}
+
+네트워크 오더링으로 바뀜.
+네트워크에서 연속된 데이터가 빅엔디언으로 들어가기로 약속함.
+윈도우즈.. 숫자저장방식이 리틀엔디안이라 변화가 필요.
+
+htos
+호스트 to 서버
+
+Port 2byte
+IPv4 4byte
+
+OOB: TCP Option
+Out Of Bound
+
+if no errors occurs, send returns the total number of bytes sent, ...
+
+JAVA자체는 업무로직이라 시스템을 이해할 필요가 없지만
+네트워크라는 시스템을 알아둬야할 필요가 있음.
+
+컴퓨터공학의 기본
+네트워크가 기본.
+새로운 프로토콜들의 기반.. TCP/IP
+개발자도 IP port만 만드는 건..
+
+1:1
+다:다에서 문제가 생김
+네트워크의 메커니즘을 모르면 생길 수 있는 문제
+코더에서 멈추지 않기 위한 수업.
+
+내가 약하다면 TCP/IP에 대해 지식을 수행할 것.
+
+나는 돌아가는 데 남한테서는 돌아가지 않는 문제를 해결하기 위한 것.
+네트워크프로그래밍을 하는 이유
