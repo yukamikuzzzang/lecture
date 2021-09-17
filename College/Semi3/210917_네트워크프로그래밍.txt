@@ -1,0 +1,66 @@
+read write(리눅스)
+recv의 장점 좀 더 디테일한 프로그래밍을 가능하게해줌.
+
+서버
+socket
+bind
+listen
+accept
+recv / send
+close
+
+클라이언트
+socket
+connect
+send/ recv
+close()
+
+서버와 클라이언트간에 recv/ send <> send/ recv
+클라이언트에서 나가기전까지 반복.
+
+recv만 할 께 아니라 보내보자.
+
+*기존코드에서
+1. 클라이언트에서 서버로 메시지(문자열)을 보낸다.
+	> 클라이언트: send()
+	> 서버 : recv()
+2. 서버는 클라이언트로부터 메시지(문자열)을 받아 클라리언트로 전송
+	> 서버 : send()
+	> 클라이언트: recv()
+3. 1, 2번은 반복된다.
+
+클라이언트에서 Ctrl+C하면 종료.
+
+버퍼가 50인 상황에서의 echo server
+Server:
+send(1) 
+send(2)
+send(3)
+send(4)
+
+Client:
+Input: A
+send(A)
+recv(1)
+
+Input: B
+send(B)
+recv(2)
+
+이때 필요한 것이 규약.
+
+
+Server 		Client
+recv		send('A')  / send('B')
+//언제보내는지는 OS가 결정.
+'A','B'를 동시에 받음.
+
+
+'A\0'
+'B\0'
+
+널문자를 바탕으로 문자를 구분해서 보내줄 수 있음.
+버퍼사이즈보다 크게 들어오는 경우에 모아서 한꺼번에 보낼 수 있는 방법은?
+
+책 117p
+accpet에  for문을 안돌렸다고 교수님께 말씀드리기.....!!!!!!!!!!!!!!!
