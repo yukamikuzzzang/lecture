@@ -38,3 +38,22 @@ print(product,C)
 print("최초적합=",FirstFit(product, C))
 print("Next적합=",NextFit(product, C))
 print("Best적합=",BestFit(product, C))    #정렬된 상태가 영향을 주기 때문에
+
+X = FirstFit(product, C)
+Y = NextFit(product, C)
+Z = BestFit(product, C)
+
+Answer = 0
+
+if X >= Y:
+    if Z >= Y:
+           Answer = Y
+    else:
+           Answer = Z
+else:
+    if Z >= X:
+           Answer = X
+    else:
+           Answer = Z
+
+print("필요한 최소한의 통의 개수 = ",Answer,"개")
