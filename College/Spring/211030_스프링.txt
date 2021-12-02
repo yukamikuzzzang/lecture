@@ -1,0 +1,28 @@
+프론트와 백엔드가 한 번에 움직이는 것이 맞음.
+프론트를 빌드하면 파일이 만들어짐. static 같은
+
+이걸 백엔드 폴더에 집어넣는 코드를 만듬.
+jar 파일
+
+springboot에 boot jar를 만듬.
+maven에 package와 같은 말
+
+먼저 빌드 front 해라.
+run script build > 실행 > 결과 값이 빌드 폴더에 생성
+src main > res > package
+
+location.js
+프론트엔드만 따로 하면 3000번 포트.
+하나의 웹 애플리케이션으로 호출하면 8080
+
+한줄을 고치고.. 또 다른 걸 고친다고 해보자.
+고칠 때마다 빌드를 해서 넣어줘야하는 문제..
+
+gradle > task..
+
+spring profiles
+
+application.yml
+
+local일 땐 엘라스틱의 ip를 고정.
+노드가 기본적으로 3000번 포트로 돌아감.

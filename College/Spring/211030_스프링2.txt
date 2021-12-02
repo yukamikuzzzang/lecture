@@ -1,0 +1,39 @@
+npm start
+:3000 port: nodeserver가 UI를 그려줌.
+
+해당 UI에서 화면을 움직임
+front > location.js
+
+onCenterChanged
+...> Update Marker
+
+로컬.. > 로컬을 해야함.
+
+나의 브라우저에서 화면을 띄움.
+8080과 3000번 포트를 띄운 상태
+그러나 이제는 내 PC에 있는 3000번이 아닌 
+findcvs.hoseo.dev에 연결.
+
+해야하지만..
+웹에 뜨는 localhost는 우리 PC
+
+SpringBoot 입장에선 Server 객체.
+
+npm과
+spring을 동시에 띄운 상태에서야 마커가 뜸.
+실제로 운영할 때에는..
+
+API를 빌드할 때 프론트에 있는 거를 빌드해서 
+API에 넣도록함.
+
+실행시켜서 보려고 한다면
+API와 npm을 모두 틀어놔야 마커가 보인다..!
+
+axios BASEURL을 부르게 함.
+환경변수를 정의
+
+application.property
+에서 이를 따로 정의할 수 있음.
+
+env PRODUCTION 일 떈.. 서버에..
+
