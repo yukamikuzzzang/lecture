@@ -1,0 +1,313 @@
+220p
+프로세스의 이해와 활용
+
+tcp echo program을 기본으로 하고
+소스코드의 이해
+함수, 매개변수 사용
+들이 중요할 것 같음.
+
+주관식은 알려드림.(1문제)
+
+자주 사용하는 함수들은 외워야하고
+주관식:UDP가 TCP보다 빠른 이유 148p
+
+UDP는 TCP와 달리 흐름제어를 하지 않는다.
+뭐지..?
+
+TCP, UDP, 함수명
+대표적인 함수들 이름들..
+
+echo_server, echo_client쪽을 보면 될 듯.
+
+220p
+시스템 프로그래밍의 범주
+프로세스, 스레드에 대한 이해.
+
+Unix(Linux)계열 > thread X
+모든 작업 처리는 프로세스가 한다.
+
+Unix mem
+________
+전역변수	
+코드-----------	< 하나의 cpu<core>
+heap 명령어(동적 메모리)
+stack 명령어(별도영역, local변수)
+
+
+windows mem
+______
+전역변수
+코드=============< 하나의 cpu<core>(쓰레드가 2개라면 2개를 동시실행, 동일한 코드를 서로 다른 스레드가 실행)
+heap영역
+thread1 stack
+thread2 stack
+...
+
+CPU-CORE는 한 번에 하나씩 처리.
+
+<과거엔 스레드가 없었던 Unix계열 프로그램들>
+여러 클라이언트에서 주는 여러 요청을 하나의 서버에서 받아야함.
+클라이언트에서 보낸 요청만큼 프로세스를 생성해야.
+
+스레드로 처리하면
+
+하나의 프로세스 안에
+3개의 스레드로 매칭시킴.
+-전역변수를 공유하게 됨.
+-자칫 데이터가 꼬이는 문제가 생길 수 있음.
+<<대비책으로 동기화라는 개념이 들어감.
+<<보안 문제도 생길 수 있음.
+(프로세스가 몰래 스레드를 생성해서 붙일 수도 있다고)
+
+클라이언트가 접속해오면 프로세스를 만들어야..
+한 친구가 접속하면 프로세스를 만들고..
+fork()
+
+main()
+>listen()	------- [접속요청]
+>accpet()
+>child process() 생성 (p1)[fork 사용] >listen() [올라감]
+
+많은 메모리들이 프로세스로 사용되기에 리소스 제한이 큼.
+(그에반해 스레드는 리소스 제한이 적음.)
+(스레드로 하면 더 많은 요청을 받을 수 있다는 의미)
+
+관리를 하지 않으면 좀비프로세스가 될 수 있기에
+
+1. 자식프로세스 생성 with fork()
+2. 자식프로세스 관리
+3. 부모<->자식, 형제(자식<->자식)간 통신 방법 
+<Inter Process Call>
+p1 -- 하드디스크에 쓴 걸 가져감 --> p2
+p1 -- 공유메모리(shared memory)에 쓴 걸 가져감 --> p2
+p1 | (스트링 파이프) p2
+<같이 쓰는 일이 없게 하기 위해서 동기화를 해야>
+
+프로세스간 시스템간 소통하는 것이 있음. signal etc...
+
+리눅스기반에서 먼저해야하는 게 
+fork()
+child process 생성 후 연결?
+
+fork.c
+
+#include <stdio.h>
+#include <unistd.h>
+
+int gval=10;
+int main(int argc, char *argv[])
+{
+ pid_t pid; //프로세스 1
+ pid_fork(); //프로세스 하나가 생성된다.
+
+ if(pid == 0) { /*child process*/
+ 	printf("I'm child\n");
+	gval += 10;
+ }else{ /*Parent process*/
+	printf("I'm parent\n");
+	gval += 33;
+ sleep(30);
+ printf("gval:%d\n",gval);
+ return 0;
+}
+
+vi fork.c
+gcc -o fork fork.c
+
+부모나 child나 메모리의 영역을 그대로 복사한다.
+
+./fork
+
+Parent -------- > Child
+....		...X 종료<call> | 리턴이후 OS가 메모리에서 
+			         해당 프로세스를 삭제
+		삭제 되지 않고 남아있는 상황<좀비프로세스>
+		리소스가 차서 시스템이 느렺려지거나, 다운되거나...
+
+프로세스 목록을 볼 때에 child는 없어야 맞다.
+int main(int argc, char *argv[])
+return 0;
+
+쉘에서 실행한 것을 쉘에서 return값을 받는다.
+그동안 child는 죽지 않음.
+
+부모가 죽으면 OS(쉘)에게 책임이 있기에 좀비가 안생김
+int gval=10;
+int main(int argc, char *argv[])
+{
+ pid_t pid; //프로세스 1
+ pid=fork(); //프로세스 하나가 더 생성된다.
+
+ if(pid == 0) { /*child process*/
+ 	printf("I'm child\n");
+	gval += 10;
+ }else{ /*Parent process*/
+	printf("I'm parent\n");
+	gval += 33;
+ sleep(100);
+ printf("gval:%d\n",gval);
+ return 0;
+}
+
+defunct <좀비>
+자식을 받지 못하고 잠..
+~
+#include<sys/wait.h>
+int main(int argc, char *argv[])
+{
+ pid_t pid; //프로세스 1
+ int status;
+ pid=fork(); //프로세스 하나가 더 생성된다.
+
+ if(pid == 0) { /*child process*/
+ 	printf("I'm child\n");
+	return 3;
+ }else{ /*Parent process*/
+	printf("I'm parent, my child is %d\n", pid);
+	wait(&status);
+
+	if(WIFEXITED(status)) //매크로 wifexited
+		printf("child exited %d\n",WEXITSTAUS(status));
+sleep(100)
+}
+return 0; 
+}
+
+wait에서 child가 정상적으로 종료되었는지를 체크하는 것.
+wait 함수로 정상실행 이후 return 한다.
+시그널 발생시 wait를 불러 깨움.
+
+wait가 자기고 있는 문제
+client가 종료될 때 signal을 가져오면 좋다.
+
+#include <signal.h>
+
+child 종료 시 signal 발생.
+signal을 받고 발생시킴?
+
+void childproc_handler(int sig){
+ int status;
+ pid_t pid = waitpid(-1, &status, WHOHANG);
+
+if(WIFEXTED(status)){
+printf("Exit child-proc ID : %d\n RETURN: %d \n",pid, WEXITSTATUS(status)); //종료된 프로세스 id를 구하는 함수
+}
+}
+
+main 중..
+
+act.sa_handler = childproc_handler;
+sigemptyset(&act.sa_mask);
+act.sa_flags = 0;
+sigaction(SIGCHILD, &act, 0);
+
+wait를 지워줍시다.
+
+wait pid를 호출할 때에 child process는 종료된 상태
+종료된 child의 pid를 구함.
+
+부모가 signal을 받으면 수행할 함수를 정의함.
+wait pid?
+현재 프로세스 id를 리턴하는 느낌.
+wait pid는 대기하지 않는 친구라.,
+child가 빠져나가고 저 친구를 꺠꺠깨우면.. 바로 return
+
+#include <stdio.h>
+#include <unisted.h>
+#include <signal.h>
+#include <sys/wait.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+
+void sigchild_handler(int sig){
+ pid_t pid;
+ int status;
+ pid = waitpid(-1, &status, WNOHANG);
+ printf("Exited child: %d\n", pid);
+
+}
+
+int main(int argc, char *argv[]){
+ struct sgiactoin act;
+ int svr_rock, cli_sock;
+ struct sockaddr_in svraddr, ciladdr; 
+ int nRet;
+ socklen_t adr_sz;
+ pid_t pid;
+ char message[50];
+ char recvbuffer[2048];
+ int sendbytes = 0;
+ int nRecvSize = 0;
+ int ndf;lsf;lds;fkd
+
+ act.sa_handler = sigchild_handler;
+ sigemptyset(&act.sa_mask);
+ act.sa_flags=0;
+ sigaction(SIGCHILD, &act, 0);
+
+ 
+svr_sock = socket(PF_INET, SOCK_STREAM, 0);
+
+memset(&svraddr, 0, sizeof(svraddr)); //로컬 변수라 초기화
+svraddr.sin_family = AF_INET;
+svraddr.sin_addr.s_addr = htons(INADDR_ANY);
+svraddr.sin_port=htons(9090);
+
+nRet = bind(svraddr, (strct sockaddr *)&svraddr, sizeof(svraddr))
+
+if(nRet == -1) return -1;
+
+nRet = listen(svr_sock, 5); //5개까지 동시허용
+
+if(nRet == -1) return -1;
+
+while(1){
+ adr_sz = sizeof(cliaddr);
+ cli_sock = accept(svr_sock, (struct sockaddr *) &cliaddr, &adr_sz);
+
+if(cli_sock == -1) return -1;
+else printf("New connection!\n");
+
+pid = fork();
+
+if(pid == -1) {
+ close(cli_sock);
+ continue; //지금 연결은 무시하고 다음 연결을 진행
+}
+else if(pid == 0){ //child
+ close(svr_sock); 
+
+while(1){
+ memsest(recvbuffer, 0 , sizeof(recvbuffer));
+ while((nRecvSize = recv(sd_child, message, sizeof(message),0)) > 0) {
+  memcpy(recvbuffer+strlen(recvbuffer), message, nRecvize);
+  if(message[nRecvSize-1] == '\0') break;
+ }
+ if(nRecvSize <= 0 ) {
+   printf("recv error\n");
+   break;
+  }
+ printf("Recv Message: %s\n", recvbuffer);
+
+ nSendSize = send(cli_sock, recvbuffer, strlen(recvbuffer)+1,0);
+
+ if(nSendSize <= 0) {
+  printf("send error\n");
+ }
+ }
+ return 0; //child는 while문을 타지 않도록 해야.. child에서 accept하면 안됨.
+}else { //parent
+ close(cli_sock); //서버프로세스는 child에서 진행하기에 <클라이언트 sock>이 필요없음.
+}
+
+}
+close(svr_sock);
+return 0;
+
+listen 이후 clinent와의 통신은 별도의 child에서 진행.
+child가 끝나면 좀비가 되지 않도록 바로바로 끝내줄 예정 / sig를 이용
+
+코드(딩)가(이) 싫다고 하신 교수님..?!
+
+책 220p
+프로세스 부분 가장 끝에 보면.. 책에 나와있다.
