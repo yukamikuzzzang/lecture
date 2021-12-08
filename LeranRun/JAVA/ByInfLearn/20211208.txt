@@ -63,3 +63,45 @@ C계열에선 포인터,  Java에선 레퍼런스라 불림.
 
 이클립스로 실행해보자.
 클래스 첫문자는 대문자로 짜는 습관..!
+
+*형변환?
+자료형이 변환한다는 뜻.
+
+자동(묵시)적 형변환
+//작은 공간의 메모리에서 큰 공간의 메모리로 이동
+
+byte by =10;
+//1byte
+int in = by;
+//4byte
+System.out.println("in = " +in);
+
+by는 더 큰 공간에 들어갈 때엔 아무 문제가 없다!
+1byte ...> 4byte(int) //자동형변환!
+byte by = 10;
+int in = by;
+System.out.println("in ="+in);
+
+명시적 변환
+//큰 공간의 메모리에서 작은 공간의 메모리로 이동
+4byte ...> 1byte(?)
+int iVar = 100;
+byte bVar = (byte)iVar;
+
+//명시적 형 변환은 데이터가 누실될 수 있다!
+
+iVar = 123456;
+bVar = (byte)iVar; //명시!
+System.out.println("bVar = " + bVar);
+(bVar = 64)
+
+형 변환을 해줘야하는 경우가 있음.
+처음부터 큰 데이터를 사용함으로서 해결..!
+
+-자료형에 대해서
+-기본 vs 객체
+-기본 int, double, boolean!
+-형 변환
+
+작은 거 > 큰 거(o)
+큰 거 > 작은 거(?) 데이터 유실 주의!
