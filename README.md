@@ -8,6 +8,9 @@
 여기는 그저 내가 배운 것들에 대한 내용을 기록한 공간일 뿐입니다.
 할 수 있다면 스터디도 하고 싶워요..
 
+시간은 소중합니다. 당신의 돈보다도요.
+시간약속을 잘지키는 것은 당신이 할 수 있는 최소한의 예의라는 것을 잊지말았으면 합니다.
+
 ```
 College : Learn something in hoseo college  
 LearnRun: Learning now at InfLearn
