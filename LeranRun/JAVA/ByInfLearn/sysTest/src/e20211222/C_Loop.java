@@ -2,7 +2,7 @@ package e20211222;
 
 import java.util.Scanner;
 
-public class Loop {
+public class C_Loop {
     public static void main(String[] args){
         System.out.println("Input Number : ");
 
