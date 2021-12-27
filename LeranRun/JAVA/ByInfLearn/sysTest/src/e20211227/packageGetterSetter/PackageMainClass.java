@@ -1,6 +1,6 @@
-package e20211227;
-import e20211227.anotherpackage.calculate.*;
-
+package e20211227.packageGetterSetter;
+import e20211227.packageGetterSetter.anotherpackage.calculate.*;
+/*16강*/
 public class PackageMainClass {
     public static void main(String[] args){
 
