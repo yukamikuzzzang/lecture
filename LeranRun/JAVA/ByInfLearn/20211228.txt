@@ -1,0 +1,419 @@
+/*23강*/
+람다식
+
+최근 들어서 사용하게된 방식.
+객체지향 프로그램에 막 흥미를 느낀 사람들에겐 조금은 까다로울 수 있는 이야기.
+람다식도 개발자라면 한 번쯤 이용해보자. 편리한 점이 있다.
+
+기존의 객체 지향이 아닌 함수지향으로 프로그래밍하는 방법에 대해 알아보자~
+
+*람다식이란?
+익명함수(anonymous function)를 이용해 익명 객체를 생성하기 위한 식.
+
+기존 방법: InterfaceType 변수 <...(할당:대입) <... Interface구현
+람다식 방법: InterfaceType 변수 <...(할당:대입)<... Lamda Expressions
+
+람다식은 인터페이스를 클래스에 구현한 후 override해서 호출해서 쓰는 과정이 사라짐..!
+핵심 부분만 남음.
+
+인터페이스에서 선언만 되어있는 친구를 사용..!
+
+메소드에서 중요한 점. 
+1. 전달하는 매개변수
+2. 그 매개변수가 어떤 일을 하는가? ...> 람다식을 이용..!
+
+함수지향형?
+C언어: 함수지향 + 절차지향형으로 구성. 함수로 구현된 언어
+....
+객체지향언어로 오며 함수기능들을 묶고 묶어서 하나의 객체로 만듬.
+그러다 보니 간단한 내용들마저 객체로 묶는 것에 대한 안타까움이 있었음.
+해결책? 람다식..!
+
+자바스크립트.. 변수에도 함수를 담는 느낌.
+li6 = (x , y) -> { };
+
+*람다식 구현
+람다식은 기본적으로 함수를 만들어 사용한다고 생각하면 된다.
+
+인터페이스를 통해서 함수의 껍데기를 만들고
+그 함수를 인터페이스의 데이터 타입을 변수에 언제든 담아 우리가 구현하고 싶은대로 바꾸어 사용할 수 있다.
+
+람다식을 모른다고 코딩을 못하는 것은 아니다.(객체중심으로)
+프로젝트에서 coop해서 작업을 할 때에 큰 도움이 될 것.
+
+/*24강*/
+문자열 클래스
+기초 데이터 X, 객체 데이터인 String..!
+String에서 문제가 될 수 있는 부분을 보완하는 StringBuffer + String Builder에 대해 알아보자
+
+*String 객체와 메모리
+문자열을 다루는 String 클래스(객체)는 데이터가 변하면 메모리상의 변화가 많아 속도가 느리다
+
+String str = "JAVA";
+ J A V A
+↑
+str(시작주소 가리킴)
+
+str = str+"_8";
+ J A V A		<버려짐> GC가 곧 회수하러 감.
+ J A V A _ 8
+↑
+str [:위에 있는 것과 메모리 주소가 다름.]
+
+회수하기 까지 시간이 걸림. 그동안 메모리 공간을 차지.
+String객체를 복제해서 내용을 추가하기 때문에 시간이 걸림.
+(문자열을 대입연산자로 바로 생성할 수 있다는 것은 큰 장점. new String() 할 필요 없음)
+(근데 정작 속은 new String()과 다를바가 없음)
+
+문자열이 변경되면 기존의 객체를 버리고, 새로운 객체를 메모리에 생성.
+이때, 기존 객체는 GC에 의해 메모리 회수가 이루어짐.
+
+*StringBuffer, StringBuilder
+String 클래스의 단점을 보완한 클래스로 데이터가 변경되면 메모리에서 기존 객체를 재활용.
+
+StringBuffer sf = new StringBuffer("JAVA");
+
+ J A V A
+↑
+str
+
+sf.append("_8");
+ J A V A _ 8
+↑
+str [:기존 메모리 주소에 추가.]
+
+문자열 변경 시 기존의 객체를 재활용
+속도는 StringBuilder가 조금 더 빠르며, 데이터 안정성은 StringBuffer가 조금 더 좋음.
+(
+간단히 설명: StringBuffer는 안정성이 높다. 메모리의 데이터가 들어가고 빠질 때 Syncronize 기법을 사용. 데이터가 순차적으로 들어올 때 하나씩하나씩 메모리를 받음(줄을 서시오.) 속도는 느리지만 데이터가 훼손되는 경우가 거의 없음.
+
+StringBuilder는 들어오는 대로 받기에 안정성은 떨어져도 속도는 좋음.
+(!엄연히 메모리 상황에서 상대적인 것임. 요즘 추세는 (많은 데이터 처리 시 StringBuilder를 선호하는 경향이 있음. ))
+)
+
+String을 정말 많이 쓰이는 친구.
+이를 보완하는 Buffer와 Builder
+
+String 객체의 단점을 말했지만.. 우리가 쓰기에 속도가 느릴만큼 문제가 되진 않는다.
+사람이 느끼지 못할 정도임. (1년 내내 데이터를 처리하지 않는 이상..)
+
+장기간 동안 데이터가 누적되는 경우엔 StringBuffer / Builder
+사용하기 쉬운 건 아무래도 String
+
++
+https://java.ihoney.pe.kr/503 StringJoiner
+/*25강*/
+Collections 자료형!
+
+이쪽의 데이터를 저쪽으로 보낼 때 데이터를 받는 쪽에서 데이터를 어떻게 처리할지..
+송수신하는 과정을 많이 거침. 데이터를 하나씩 주고받을 수도 있으나 복잡할 경우 여러 클래스를 사용하게 되는 경우가 생김. 대표적인 컬렉션들을 살펴보자.
+
+배열과 같이 자료를 효율적으로 관리하는 방법에 대해 알아보자.
+
+*List
+List는 "인터페이스"로 이를 구현한 클래스는 인덱스를 이용해 데이터를 관리한다.
+
+List
+↑<구현>
+Vector, ArrayList, LinkedList [사용법은 배열과 비슷, ArrayList를 가장 많이 사용]
+
+특징
+-인덱스를 이용
+-데이터 중복이 가능
+
+list.add()	추가
+list.set() 	변경
+list.get()	데이터 추출
+list.remove() 데이터 제거
+list.clear()	데이터 전체 제거(객체는 살아있음)
+boolean b = list.isEmpty()	데이터 유무
+
+데이터 관리하는데 많이 쓰는 ArrayList
+DB를 이용할 때에 DB의 데이터를 꺼내 활용할 때에 ArrayList를 비롯한 각종 자료형 객체를 사용.
+
+*Map
+Map도 인터페이스로 이를 구현한 클래스는 Key를 이용해 데이터를 관리
+
+Map
+↑<구현>
+HashMap
+
+ex. 목욕탕에서 '55번'이라는 키를 주면 옷을 그곳에다 보관
+개발자가 키를 하나 만들고 키와 매칭된 데이터를 따로 모아 만듬.
+
+키도 내가 만들고 이를 관리할 데이터도 만들고..
+
+특징:
+Key를 이용
+Key는 중복될 수 없음(다른 사람의 옷을 가져가는 일은 없어야)
+데이터 중복이 가능
+
+다른 키에 담긴 데이터가 같을 순 있어도 Key는 같으면 안된다.
+
+인덱스로 관리하는 ArrayList
+hashMap 앞은 키 뒤는 데이터의 자료형
+
+이러한 것 말고도 데이터를 관리하기 위한 자료형들이 되게 많아요.
+
+ArrayList는 이해하기 괜찮은데
+Map은 조금 힘들듯 그래도.. Key, 데이터 모두 개발자가 만드는데 키 값은 유일해야하다는 것.
+키값을 통해 데이터를 관리할 수 있다는 것..! 이것을 기억하자!
+
+/*26강*/
+예외처리
+
+프로그램: 소프트웨어를 만드는 경우가 대부분. 문제가 발생한다면 큰일..!
+프로그램이 실행되다가 예외가 생길 때에 전체적인 시스템에 방해되지 않게 문제를 해결할 수 있는 코드까지 예측해서 넣어줘야 함. (예방까지) "예외처리!"
+
+*예외란?
+프로그램에 문제가 있는 것을 말함. 예외로 인해 시스템 동작이 멈추는 것을 막는 것: 예외처리
+문제가 있더라도 전체 시스템의 문제가 없도록 하는 것..!
+문제 중 간단한 문제 일 수도 있음.
+
+Exception
+수를 0으로 나누려고 하는 경우.. 등등.. / 소프트웨어적인 문제
+
+Error
+솔루션이 구동이 될 때 메모리부족, JVM 문제, 전력 차단.. 소프트웨어로 해결할 수 없는 영역 
+
+Exception vs Error
+개발자가 대처할 수 있음: Exception
+개발자가 대처할 수 없음: Error
+
+Exception
+>Checked Exception
+'예외처리'를 반드시 해야하는 경우: 네트워크, 파일 시스템 등
+>UnChecked Exception
+'예외처리'를 개발자의 판단에 맡기는 경우(데이터 오류 등)
+(a*b, a+b ...) ex) a/b할 때 b에 0이 들어올까봐 미리 대비하는 경우.
+
+Exception과 Error의 차이
+Exception중 Checked(강제로 해야함) Unchecked(해도 되고 안해도 되고)
+
+*Exception 클래스 (수십가지에 해당하는 클래스의 부모)
+Exception 클래스 하위클래스로 NullPointerExceptoin, NumberFormatException 등이 있다.
+
+	 NullPointerException	      객체를 가리키지 않고 있는 레퍼런스를 이용할 때
+Exception ArrayIndexOutOfBoundException 배열에서 존재하지 않는 인덱스를 가리킬 때
+	 NumberFormatException	      숫자데이터에 문자데이터 등을 넣었을 때
+
+Exception을 다 외울 필요도 없음. 모든 child 클래스는 Exception이 담당하기 때문.
+이런게 있다 정도만 알아두어도 됨.
+
+*try~catch (throw 보다 많이 사용)
+개발자가 예외처리하기 가장 쉽고, 가장 많이 사용되는 방법이다.
+
+try{
+	예외가 발생할 수 있는 코드
+} catch(Exception e){
+	예외가 발생했을 때 처리할 코드
+}
+
+printStackTrace() 에러메시지를 콘솔창에 띄워줌
+.getMessage() 메시지를 get으로 보여줌.
+
+에러 발생 시
+밑에 있는 내역이 실행되지 않음.
+
+*다양한 예외처리
+Exception 및 하위 클래스를 이용해서 예외처리를 다양하게 할 수 있다.
+
+try{
+
+}catch(...){}
+catch(...){}
+catch(...){}
+
+try 부분안에서 예외가 발생하는 즉시 예외를 잡고
+바로 try~catch 구문 이후로 넘겨버린다.
+
+*finally
+'반드시' 실행해야되는 경우
+catch 뒤에 finally를 써줌.
+
+주로 네트워크가 외부에있는 자원을 끌어다 쓸 때 주로 사용(DB에서도 마찬가지.)
+
+*throws
+예외 발생 시 예외 처리를 직접 하지 않고 호출한 곳으로 넘김.
+남에게 미뤄버림.
+
+(나를 호출한 곳으로 돌아가!)
+
+예외처리하는 방법: try~catch, finally + throws
+구문을 사용하는 것은 문제가 안되지만.. 예외를 실무에서 사용할 때 그때그때 상황에 맞춰서 잘 판단해서 사용하면 됩니다. (노하우)
+
+/*27강*/
+입력과 출력 I/O
+여러 입력과 출력과 관련된 클래스들을 제공함.
+
+바이트 말고 문자단위로 하는 DataInputStream, DataOutputStream etc..
+
+*입/출력 이란?
+다른 곳의 데이터를 가져오는 것: 입력, 다른 곳으로 데이터를 내보내는 것: 출력
+(like Scanner, System.out.println(" "))
+
+나를 기준으로 데이터를 내 쪽으로 보내면 출력, 데이터를 입력하면 입력
+
+프로그램  <...입력(IntputStream)  입/출력 대상
+	 출력(OutputStream)...>
+
+*입/출력 기본 클래스
+입/출력에 사용되는 기본 클래스는 1byte단위로 데이터를 전송하는 InputStream, OutputStream이 있다.
+
+프로그램   <...InputStream	입/출력 대상
+	  OutputStream...>
+
+InputStream ... FileInputStream
+	    ... DataInputStream
+	    ... BufferedInputStream
+
+OutputStream ... FileOutputStream
+	      ... DataOutputStream
+	      ... BufferedOutputStream
+
+*FileInputStream / FileOutputStream
+파일에 데이터를 읽고 쓰기 위한 클래스로 read(), write() 메서드 이용
+
+FileInputStream
+read();			read() 1byte씩 읽음
+read(byte[]);		read(byte[]) [ ]크기만큼 읽음 (묶음으로 읽음, 속도향상)
+
+FileOutputStream
+write(byte[] b);		write(byte[] b); 배열로 던져 전체 쓰기
+write(byte[], int off, int len);	write(byte[] b, int off, int len) : off(시작점), len(길이)
+
+더 이상 읽을 게 없을 땐 .read() 값이 -1로 결정.
+네트워크 같이 읽기,쓰기 같은 것을 할 때에는 컴파일 에러를 통해 반드시 예외처리를 하도록 유도. Hello Java가 아스키코드로 바뀌어 표현.
+
+배열에서.. 예전에 읽은 값들까지 나오기도 한다고..
+
+FileOutputStream 객체, 기존에 있으면 덮어쓰고 없으면 새로 생성.
+
+*파일 복사
+파일 입/출력 클래스를 이용해서 복사할 수 있다.
+
+File ...> 입력 ....> InputStream, OutputStream ...> 출력 ...> File
+입출력을 통해 어딘가로 복사하면 그게 파일 복사.
+입출력을 조금 짬뽕한 것.
+
+InputStream에서 읽어와서
+OutputStream로 출력 ..> *파일복사*
+
+*DataInputStream, DataOutputStream
+getBytes() ...> ASCII코드의 바이트 값을 뽑아냄.
+인간이 쓰는 문자열로 뽑아내지 못함..
+Byte 단위로 입출력을 개선해서 문자열을 좀 더 편리하게 다룰 수 있음.
+
+File ...입력...> InputStream ← DataInputStream, DataOutputStream  → OutputStream ...> 출력
+
+OutputStream을 매개변수로 넣어서 DataOutputStream이라는 새로운 객체를 만듬.
+OutputStream을 업그레이드..!
+InputStream도 DataInputStream에 넣어서 내연확장
+
+dataInputStream.readUTF();
+dataOutputStream.writeUTF(str);
+
+문자단위로 데이터를 입력/출력하기 위해 사용하는 친구들.
+
+*BufferedReader, BufferedWriter(문자단위로 읽고 씀.)
+byte 단위의 입출력을 개선해서 문자열을 좀 더 편리하게 다룰 수 있음.
+
+대부분의 이미지 텍스트 동영상은 inputStream계열을 많이 씀.
+
+FileReader ...확장...>BufferedReader(FileReader)
+.readLine() // 한 줄씩 읽어나감.
+
+내가 읽어온다. 입력
+내가 내보낸다. 출력
+입력과 출력을 사용할 때 기법? Stream(연결고리, 시냇물 같은 흐름)
+입력/출력할 때의 관계를 Stream으로서 제공
+
+InputStream과 OutputStream을 구현한 클래스들이 존재.
+File, Data, Buffer...
+
+File 	Byte단위로 읽고 씀
+File을 개선해 나온 것이 Data input/output Stream
+Buffered 	문자단위로 읽고 씀
+
+Input Output
+File Input / Output
+Data Intput/ Output
+Buffered Intput / Output
+
+/*28강 네트워크*/
+네트워크가 연결된 상태에서 A와 B사이에 데이터를 주고받는 방법에 대해 알아보자.
+
+네트워크 데이터 입력 및 출력
+*소켓Socket* -- 개요만 알면 된다.
+Socket과 관련된 클래스
+Client와 Server 소켓(Socket) 
+양방향 통신
+
+*네트워크 데이터 입력 및 출력
+네트워크 대상(객체) 사이에 입/출력(InputStream, OutputStream)을 이용해 데이터를 입력하고 출력함.
+
+<네트워크로 연결된 상태에서...!>
+대상A <... 입력(InputStream) <... 대상B
+        ...> 출력(OutputStream) ...>
+
+소켓 사용법만 안다면 네트워크 상에서 데이터를 입력하고 출력하는 것을 알 수 있습니다.
+
+*소켓(Socket)
+네트워크상에서 데이터를 주고받기 위한 장치
+
+대상A[socket] <...> InputStream/OutputStream <...> [socket]대상B
+
+socket은 like 전화기
+내 목소리를 입력/ 출력하는 장치의 역할을 함.
+입출력은 알고 있으니 Socket에 대한 사용방법만 알면 되겠구만.
+
+*Socket 클래스
+서버는 클라이언트를 맞을 준비를 하고 있다가 클라이언트의 요청에 반응한다.
+
+대상A[socket] <.........> [Server socket]대상B
+클라이언트		서버
+[브라우저]		[naver서버]
+
+브라우저[네이버, 구글, 다음] : 클라이언트
+naver.com 서버쪽으로 찾아가서 naver를 열어줌.
+
+클라이언트로 부터 요청이 Server Socket으로 오면 데이터를 클라이언트 Socket에게 줌.
+
+serverSocket = new ServerSocket(9000);	//서버 소켓 생성, 매개변수:9000(=포트번호)
+//어려운 로직에 대해 다 이해할 필욘 없음..
+//단 한 줄에 해결..!
+
+서버의 Unique한 주소: IP
+홈페이지 하나만 제공하기에는 서버가 아까움.
+메일 서비스, 파일 전송 서비스.. etc 등등 여러 서비스 제공시 사용하는 게 포트
+서비스 마다 각각의 포트가 존재.
+
+웹 홈페이지는 대체로 80포트.
+포트는 대체로 6만개 정도 되지만 주로 사용하는 포트는 따로 있다.
+
+외부에서 소켓을 만들어 신호를 보내게 되면...
+socket = serverSocket.accept();  //accept메소드가 자동으로 실행!
+이걸 바탕으로 소켓을 반환.
+
+*Client와 Server 소켓(Socket)
+서버에 ServerSocket를 준비하고 클라이언트에서 Socket을 이용해서 접속.
+서로간의 데이터를 전송.
+
+내 PC도 엄연한 PC
+//127.0.0.1 == localhost
+
+서버쪽에선 ServerSocket도 만들고
+클라이언트는.. Socket
+
+*양방향 통신
+Socket을 통해 통신 + inputStream OutputStream만 얹으면 데이터 통신!
+클라이언트와 서버는 InputStream, OutputStream을 이용해 양방향 통신을 할 수 있다.
+
+소켓 객체에 대해서만 알면 끝.
+인풋 스트림, 아웃풋 스트림만 알면 끝.
+데이터를 처리해주는 게 소켓..!
+
+이전에 배웠던 OutputInput 스트림에 대해 숙지
+
+output ...> input
+intput <... output
