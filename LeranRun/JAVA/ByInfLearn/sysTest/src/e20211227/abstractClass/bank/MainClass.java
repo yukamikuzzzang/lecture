@@ -11,7 +11,7 @@ public class MainClass {
 
         System.out.println();
 
-        myBank.getInformations();
+        myBank.getKnowledge();
 
     }
 }

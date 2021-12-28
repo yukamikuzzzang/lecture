@@ -1,5 +1,6 @@
 package e20211227.abstractClass.bank;
 
+
 public class MyBank extends Bank{
     public MyBank(String name, String account, int totalAmount){
         super(name, account, totalAmount);

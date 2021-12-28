@@ -34,7 +34,7 @@ public abstract class Bank {
     public abstract void cancellation();
 
     //정보출력
-    public void getInformations(){
+    public void getKnowledge(){
         System.out.printf("name : %s\n", name);
         System.out.printf("account : %s\n", account);
         System.out.printf("totalAmount : %d\n", totalAmount);
